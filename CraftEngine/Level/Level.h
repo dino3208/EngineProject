@@ -14,6 +14,9 @@ namespace Craft
 	// : weak_from_this() - this 포인터를 weak_ptr로 변환
 	class Level : public std::enable_shared_from_this<Level>
 	{
+		// friend 선언
+		friend class Engine;
+
 	public:
 		Level();
 		virtual ~Level();

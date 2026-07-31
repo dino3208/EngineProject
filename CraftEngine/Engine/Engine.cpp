@@ -1,4 +1,6 @@
 ﻿#include "Engine.h"
+#include <Level/Level.h>
+
 #include <iostream>
 #include <Windows.h> // #include <chrono>
 #include <cassert>
@@ -81,6 +83,30 @@ namespace Craft // 이걸 CPP에서 작성함으로 인해서 괄호 안에 정�
 				// 화면 그리기
 				Draw();
 
+				// 이 위까지 호출이 완료되면 프레임 처리 완료됨
+			
+				// 레벨 전환 처리
+				if (nextLevel)
+				{
+					// 기존 레벨 정리
+					if (mainLevel)
+					{
+						mainLevel.reset();
+					}
+
+					// 추가 요청된 레벨을 메인 레벨로 설정
+					mainLevel = nextLevel;
+
+					// 포인터 정리
+					nextLevel.reset();
+				}
+
+				// 추가/제거 요청된 액터 정리
+				if (mainLevel)
+				{
+					mainLevel->ProcessAddAndDestroyActors();
+				}
+
 				// 입력 상태 저장
 				SavePreviousInputStates();
 
@@ -113,22 +139,43 @@ namespace Craft // 이걸 CPP에서 작성함으로 인해서 괄호 안에 정�
 	}
 	void Engine::OnInitialized()
 	{
+		// 레벨 초기화 처리
+		// 예외 처리
+		if (!mainLevel || mainLevel->HasInitialized())
+		{
+			return;
+		}
+
+		// 초기화 이벤트 호출
+		mainLevel->OnInitialized();
 	}
 	void Engine::BeginPlay()
 	{
+		if (!mainLevel)
+		{
+			return;
+		}
+
+		// 레벨에 이벤트 전달
+		mainLevel->BeiginPlay();
 	}
 	void Engine::Tick(float deltaTime)
 	{
-		// Todo: deltatime 출력
-		std::cout
-			<< "Engine::Tick() - deltaTime: "
-			<< deltaTime
-			<< "| FPS: " 
-			<< (1.0f / deltaTime)
-			<< "\n";
+		if (!mainLevel) // 맞는 걸 조건화 하는 것보다 아니면 return하게 하는 게 깔끔
+		{
+			return;
+		}
+
+		mainLevel->Tick(deltaTime);
 	}
 	void Engine::Draw()
 	{
+		if (!mainLevel) 
+		{
+			return;
+		}
+
+		mainLevel->Draw();
 	}
 	void Engine::SavePreviousInputStates()
 	{
