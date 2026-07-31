@@ -1,9 +1,14 @@
 ﻿#include "Engine.h"
 #include <iostream>
 #include <Windows.h> // #include <chrono>
+#include <cassert>
+
 
 namespace Craft // 이걸 CPP에서 작성함으로 인해서 괄호 안에 정의가 자동으로 들어갈 수 있게 됨.
 {
+	// 전역 변수 초기화
+	Engine* Engine::instance = nullptr;
+
 	Engine::Engine()
 	{
 	}
@@ -86,6 +91,16 @@ namespace Craft // 이걸 CPP에서 작성함으로 인해서 괄호 안에 정�
 	{
 		// 엔진 종료 플래그 설정
 		isQuit = true;
+	}
+	Engine& Engine::Get()
+	{
+		// 검증 - assert
+		// 무조건 통화해야하는 조건이 있을 때 사용
+		// 디버그 모드에서만 동작
+		assert(instance && "instance is null");
+
+
+		return *instance;
 	}
 	void Engine::ProcessInput()
 	{
