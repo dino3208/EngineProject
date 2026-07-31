@@ -41,7 +41,6 @@ namespace Craft // 이걸 CPP에서 작성함으로 인해서 괄호 안에 정�
 
 		// 고정 프레임으로 만들기 위한 값
 		float oneFrameTime = 1.0f / setting.framerate;
-
 		// 엔진 루프
 		while (true)
 		{

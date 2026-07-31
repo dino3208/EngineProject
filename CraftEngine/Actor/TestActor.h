@@ -9,4 +9,3 @@ public:
 	virtual void Tick(float deltaTime) override;
 
 };
-

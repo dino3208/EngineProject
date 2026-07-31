@@ -7,13 +7,15 @@ namespace Craft
 	}
 	Level::~Level()
 	{
-		// 초기화 되었다고 설정
-		hasInitialized = true;
+		
 	}
 	
 	void Level::OnInitialized()
 	{
+		// 초기화 되었다고 설정
+		hasInitialized = true;
 	}
+
 	void Level::BeiginPlay()
 	{
 		// 액터 초기화 시 1번 호출되는 이벤트
