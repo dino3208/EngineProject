@@ -1,7 +1,12 @@
 #pragma once
 
+#include <memory> // std::weak_ptr 사용을 위해
+
 namespace Craft
 {
+	// 전방선언
+	class Level;
+
 	// 가상 공간에 배치될 모든 액터의 기본 클래스
 	class Actor
 	{
@@ -25,6 +30,9 @@ namespace Craft
 		inline bool IsActive() const { return isActive && !hasExpired; }
 		inline bool HasExpired() const { return hasExpired; }
 
+		inline std::shared_ptr<Level> GetOwner() const { return owner.lock(); }
+		inline void SetOwner(std::weak_ptr<Level> newOwner) { owner = newOwner; }
+
 	protected:
 		// BeginPlay 이벤트 처리 여부 플래그
 		bool hasBeganPlay = false;
@@ -34,6 +42,11 @@ namespace Craft
 
 		// 삭제 요청 여부 플래그
 		bool hasExpired = false;
+
+		// 오너십 - 이 액터를 소유하는 레벨 객체
+		// weak_ptr -> 약참조 (상호참조 방지를 위해)
+		// 실제 사용 위해서는 해당 위치가 유효한지 확인 필요
+		std::weak_ptr<Level> owner;
 
 	};
 

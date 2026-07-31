@@ -2,5 +2,5 @@
   <Configurations>
     <Platform Name="x64" />
   </Configurations>
-  <Project Path="CraftEngine/CraftEngine.vcxproj" />
+  <Project Path="CraftEngine/CraftEngine.vcxproj" Id="eaad256e-246f-4e03-8d72-232b6413492a" />
 </Solution>

@@ -11,9 +11,15 @@ namespace Craft // 이걸 CPP에서 작성함으로 인해서 괄호 안에 정�
 
 	Engine::Engine()
 	{
+
+
+		// instance 초기화
+		assert(!instance && "instance is not null");
+		instance = this;
 	}
 	Engine::~Engine()
 	{
+		instance = nullptr;
 	}
 	void Engine::Run()
 	{
