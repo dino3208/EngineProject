@@ -70,6 +70,9 @@
     <PreBuildEvent>
       <Command>xcopy *.h ..\Includes\ /e /y /i</Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Message>xcopy $(OutDir)\*.lib ..\Lib\ /e /y /i</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -92,6 +95,9 @@
     <PreBuildEvent>
       <Command>xcopy *.h ..\Includes\ /e /y /i</Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Message>xcopy $(OutDir)\*.lib ..\Lib\ /e /y /i</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Actor\Actor.cpp" />
