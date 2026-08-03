@@ -1,5 +1,6 @@
 ﻿#include "Engine.h"
 #include <Level/Level.h>
+#include <Input/Input.h>
 
 #include <iostream>
 #include <Windows.h> // #include <chrono>
@@ -18,6 +19,9 @@ namespace Craft // 이걸 CPP에서 작성함으로 인해서 괄호 안에 정�
 		// instance 초기화
 		assert(!instance && "instance is not null");
 		instance = this;
+
+		// 입력 객체 생성
+		input = std::make_unique<Input>();
 	}
 	Engine::~Engine()
 	{
@@ -135,7 +139,14 @@ namespace Craft // 이걸 CPP에서 작성함으로 인해서 괄호 안에 정�
 	}
 	void Engine::ProcessInput()
 	{
+		assert(input && "input should not be null here");
+		if (!input)
+		{
+			return;
+		}
+		input->ProcessInput();
 	}
+
 	void Engine::OnInitialized()
 	{
 		// 레벨 초기화 처리
@@ -176,8 +187,15 @@ namespace Craft // 이걸 CPP에서 작성함으로 인해서 괄호 안에 정�
 
 		mainLevel->Draw();
 	}
+
 	void Engine::SavePreviousInputStates()
 	{
+		assert(input && "input should not be null here");
+		if (!input)
+		{
+			return;
+		}
+		input->SavePreviousStates();
 	}
 	void Engine::Shutdown()
 	{

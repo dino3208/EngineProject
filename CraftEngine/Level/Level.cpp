@@ -13,7 +13,7 @@ namespace Craft
 	void Level::OnInitialized()
 	{
 		// 초기화 되었다고 설정
-		hasInitialized = true;
+		hasInitialized = true; // 이걸 추가하지 않아서 SpawnActor에 계속 추가되어서 프레임이 저하되었음.
 	}
 
 	void Level::BeiginPlay()

@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <Core/Core.h>
 #include <memory> // 스마트 포인터
 
 // CraftEngine 프로젝트 안의 클래스는 Craft 네임스페이스 사용
@@ -7,12 +8,13 @@ namespace Craft
 {
 	// 전방 선언
 	class Level;
+	class Input;
 
 
 	// 메인 엔진 클래스
 	// 엔진 루프를 제공
 	// 게임 엔진의 핵심 기능 제공
-	class Engine
+	class CRAFT_API Engine
 	{
 		// 엔진 설정 (데이터)
 		struct Setting
@@ -81,5 +83,8 @@ namespace Craft
 
 		// 추가 요청된 레벨
 		std::shared_ptr<Level> nextLevel;
+
+		// 입력 시스템 변수
+		std::unique_ptr<Input> input;
 	};
 }
