@@ -6,9 +6,10 @@
 // CraftEngine 프로젝트 안의 클래스는 Craft 네임스페이스 사용
 namespace Craft
 {
-	// 전방 선언
+	// 전방 선언 (컴파일 시간 단축)
 	class Level;
 	class Input;
+	class Renderer;
 
 
 	// 메인 엔진 클래스
@@ -86,5 +87,9 @@ namespace Craft
 
 		// 입력 시스템 변수
 		std::unique_ptr<Input> input;
+	
+		// 렌더러
+		std::unique_ptr<Renderer> renderer;
+	
 	};
 }

@@ -16,7 +16,7 @@ namespace Craft
 		hasInitialized = true; // 이걸 추가하지 않아서 SpawnActor에 계속 추가되어서 프레임이 저하되었음.
 	}
 
-	void Level::BeiginPlay()
+	void Level::BeginPlay()
 	{
 		// 액터 초기화 시 1번 호출되는 이벤트
 		for (std::shared_ptr<Actor>& actor : actorList)
@@ -26,6 +26,9 @@ namespace Craft
 			{
 				continue;
 			}
+
+			// BeginPlay 이벤트 호출
+			actor->BeginPlay();
 		}
 	}
 	
@@ -86,7 +89,7 @@ namespace Craft
 			actorList.emplace_back(actor);
 		}
 
-		// 추가 처리된 목록 정리
+		// 추가 처리된 목록 정리. 바로 위에서 넣어주었으니까.
 		addRequestedActorList.clear();
 
 	}
