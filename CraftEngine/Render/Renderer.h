@@ -9,6 +9,10 @@
 
 namespace Craft
 {
+	// 전방 선언
+	class ScreenBuffer;
+
+
 	// 그리기 기능을 전담하는 전문 객체
 	class CRAFT_API Renderer
 	{
