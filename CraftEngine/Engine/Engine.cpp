@@ -27,7 +27,9 @@ namespace Craft // 이걸 CPP에서 작성함으로 인해서 괄호 안에 정�
 		input = std::make_unique<Input>();
 
 		// 렌더러 객체 생성
-		renderer = std::make_unique<Renderer>();
+		renderer = std::make_unique<Renderer>(
+			Vector2(setting.width, setting.height)
+		);
 	}
 	Engine::~Engine()
 	{
@@ -266,7 +268,7 @@ namespace Craft // 이걸 CPP에서 작성함으로 인해서 괄호 안에 정�
 			}
 			else if (strcmp(key, "height") == 0)
 			{
-				sscanf_s(token, "width = %d", &setting.height);
+				sscanf_s(token, "height = %d", &setting.height);
 			}
 
 			// 나머지 문자열 자르기 (개행 문자 기준으로)

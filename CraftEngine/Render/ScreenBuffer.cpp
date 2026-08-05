@@ -15,9 +15,9 @@ namespace Craft
 			CONSOLE_TEXTMODE_BUFFER,
 			nullptr
 		);
-
 		// 값 확인
 		assert(buffer != INVALID_HANDLE_VALUE);
+
 
 		// 화면 창 크기 설정
 		SMALL_RECT rect = {};
@@ -26,14 +26,14 @@ namespace Craft
 		rect.Right = static_cast<short>(size.x - 1);
 		rect.Bottom = static_cast<short>(size.y - 1);
 		BOOL result = SetConsoleWindowInfo(buffer, TRUE, &rect);
-		
 		// 결과 확인
 		assert(result == TRUE);
+
 
 		// 화면 버퍼 크기 설정
 		result = SetConsoleScreenBufferSize(buffer, size);
 		assert(result == TRUE);
-		
+
 		// 직접 만든 콘솔의 커서 끄기
 		CONSOLE_CURSOR_INFO info;
 		GetConsoleCursorInfo(buffer, &info);

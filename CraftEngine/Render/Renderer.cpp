@@ -1,4 +1,5 @@
 ﻿#include "Renderer.h"
+#include "Render/ScreenBuffer.h"
 #include <cassert>
 #include <iostream>
 #include <Windows.h>
@@ -50,31 +51,36 @@ namespace Craft
 	// -------------------- Frame ------------------------//
 	// static 변수 초기화
 	Renderer* Renderer::instance = nullptr;
-	Renderer::Renderer()
+	Renderer::Renderer(const Vector2& screenSize)
+		: screenSize(screenSize)
 	{
 		// 어서트
 		assert(!instance && "instnace should be null");
 		instance = this;
 
-		// 콘솔 커서 안 보이게 설정
-		CONSOLE_CURSOR_INFO info;
-		GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
+		// 프레임 객체 생성
+		const int bufferCount = screenSize.x * screenSize.y;
+		frame = std::make_unique<Frame>(bufferCount);
 
-		// 보이기 옵션을 false로 설정
-		info.bVisible = FALSE;
-		SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
+		// 생성 후 프레임 지우기
+		frame->Clear(screenSize);
+
+		// 이중 버퍼 구현을 위한 콘솔 버퍼 생성 및 초기화
+		screenBufferArray[0] = std::make_unique<ScreenBuffer>(screenSize);
+		screenBufferArray[0]->Clear();
+
+		screenBufferArray[1] = std::make_unique<ScreenBuffer>(screenSize);
+		screenBufferArray[1]->Clear();
+
+		// 화면에 0번 콘솔 버퍼 활성화
+		SetConsoleActiveScreenBuffer(screenBufferArray[0]->GetBuffer());
 	}
 	Renderer::~Renderer()
 	{
 		instance = nullptr;
 
-		// 콘솔 커서 다시 보이게 설정 (복구)
-		CONSOLE_CURSOR_INFO info;
-		GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
-
-		// 보이기 옵션을 true로 설정
-		info.bVisible = TRUE;
-		SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
+		// 콘솔 창 원래대로 복구
+		SetConsoleActiveScreenBuffer(GetStdHandle(STD_OUTPUT_HANDLE));
 	}
 	void Renderer::Submit(const std::string& image, const Vector2& position, Color color, int sortingOrder)
 	{
@@ -107,35 +113,106 @@ namespace Craft
 	}
 	void Renderer::Clear()
 	{
-		// TODO; 시스템 clear 함수 사용
-		system("cls");
+		// 프레임 값 초기화
+		frame->Clear(screenSize);
+
+		// 콘솔 버퍼 초기화
+		GetCurrentBuffer()->Clear();
 	}
 	void Renderer::DrawRenderQueue()
 	{
 		// 렌더큐를 순회하면서 그리기 명령 실행
 		for (const RenderCommand& command : renderQueue)
 		{
-			// 윈도우 콘솔 핸들
-			HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+			// 그릴 문자값이 없으면 건너뛰기
+			if (command.image.empty())
+			{
+				continue;
+			}
 
-			// 그릴 위치로 이동 (콘솔 좌표 이동)
-			SetConsoleCursorPosition(handle, command.position);
+			// y 위치가 화면을 벗어났으면 건너뛰기
+			if (command.position.y < 0
+				|| command.position.y >= screenSize.y)
+			{
+				continue;
+			}
 
-			// 글자 색상 설정
-			SetConsoleTextAttribute(handle, static_cast<WORD>(command.color));
+			// 그리려는 문자열 길이 값
+			const int length = static_cast<int>(command.image.length());
 
-			// TODO: 그리기
-			std::cout << command.image;
+			// 글자의 시작 위치
+			const int startX = command.position.x;
 
-			// 콘솔 색상 복원
-			SetConsoleTextAttribute(handle, static_cast<WORD>(Color::White));
+			// 글자의 끝 위치
+			const int endX = startX + length - 1;
+
+			// x 위치가 화면을 벗어났는지 확인
+			if (endX < 0 || startX >= screenSize.x)
+			{
+				continue;
+			}
+
+			// 실제 그릴 글자의 위치 구하기
+			// 삼항연산자
+			const int visibleStart = startX < 0 ? 0 : startX;
+			const int visibleEnd 
+				= endX >= screenSize.x ? screenSize.x - 1 : endX;
+
+			// 문자열을 루프 순회하면서 글자를 2차원 배열에 하나씩 기록
+			for (int x = visibleStart; x <= visibleEnd; ++x)
+			{
+				// 문자열에서 글자값을 가져올 때 사용할 인덱스
+				const int sourceIndex = x - startX;
+
+				// 글자 2차원 배열의 인덱스
+				// (y * width) + x
+				const int index = (command.position.y * screenSize.x) + x;
+
+				// 정렬 순서를 비교해서 그릴지 말지 판정
+				// 이미 그려진 값이 우선순위가 높으면 건너뛰기
+				// 같거나 새로 그리려는 값이 우선순위가 높으면 덮어쓰기
+				if (frame->sortingOrderArray[index] > command.sortingOrder)
+				{
+					continue;
+				}
+
+				// 2차원 배열에 글자, 속성 설정
+				frame->charInfoArray[index].Char.AsciiChar
+					= command.image[sourceIndex];
+
+				// 글자 색상 값 설정
+				frame->charInfoArray[index].Attributes 
+					= static_cast<DWORD>(command.color);
+
+				// 그리기 우선순위 값도 설정
+				frame->sortingOrderArray[index] = command.sortingOrder;
+			}
 		}
+
+		// 앞에서 설정한 2차원 배열을 콘솔에 그리기
+		GetCurrentBuffer()->Draw(frame->charInfoArray.get());
 
 		// 렌더큐 비우기
 		renderQueue.clear();
+
+		// 콘솔 색상 초기화
+		SetConsoleTextAttribute(
+			GetCurrentBuffer()->GetBuffer(),
+			static_cast<DWORD>(Color::White)
+		);
 	}
 	void Renderer::Present()
 	{
-		// TODO: 이중 버퍼링 구현할 때 내용 채우기
+		// 현재 순번의 콘솔 버퍼를 활성화
+		SetConsoleActiveScreenBuffer(GetCurrentBuffer()->GetBuffer());
+
+		// 인덱스 업데이트(갱신)
+		// 0 -> 1 -> 0 -> 1 ...
+		// 마법의 공식 -> One Minus...
+		currentBufferIndex = 1 - currentBufferIndex;
+	}
+	const ScreenBuffer* const Renderer::GetCurrentBuffer() const
+	{
+		return screenBufferArray[currentBufferIndex].get();
 	}
 }
