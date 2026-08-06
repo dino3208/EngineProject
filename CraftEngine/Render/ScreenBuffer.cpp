@@ -77,8 +77,8 @@ namespace Craft
 		SMALL_RECT rect = {
 			0,  // Left
 			0,  // Top
-			static_cast<short>(size.x), // Right
-			static_cast<short>(size.x)  // Bottom
+			static_cast<short>(size.x - 1), // Right
+			static_cast<short>(size.x - 1)  // Bottom
 		};
 
 		// 콘솔에 CHAR_INFO 타입으로 글자 쓰는 함수

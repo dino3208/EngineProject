@@ -3,6 +3,7 @@
 #include <Core/Core.h>
 #include <Math/Vector2.h>
 #include <Math/Color.h>
+#include <Core/CraftObject.h>
 
 #include <memory> // std::weak_ptr 사용을 위해
 #include <string>
@@ -13,8 +14,11 @@ namespace Craft
 	class Level;
 
 	// 가상 공간에 배치될 모든 액터의 기본 클래스
-	class CRAFT_API Actor
+	class CRAFT_API Actor : public CraftObject
 	{
+		// 매크로 지정할 때 끝에 세미콜론 넣지 않도록 주의
+		TYPE_DECLARATIONS(Actor, CraftObject)
+
 	public:
 		Actor(
 			const std::string& image = "", 
