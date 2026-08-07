@@ -1,4 +1,4 @@
-#include "GameLevel.h"
+﻿#include "GameLevel.h"
 #include <iostream>
 #include <cassert>
 
@@ -20,7 +20,7 @@ void GameLevel::LoadMap(const std::string& filename)
 	// 최종 경로 조립
 	std::string path = std::string("../Assets/") + filename;
 
-	// 파일 열기
+	// 파일 열기 (C-style)
 	FILE* file = nullptr;
 	fopen_s(&file, path.c_str(), "rt");
 	if (!file)
@@ -48,6 +48,7 @@ void GameLevel::LoadMap(const std::string& filename)
 	assert(readSize > 0 && "No data in the stage file.");
 
 	// Todo: 읽은 데이터를 기반으로 로직 제작
+	// 1. 화면에 액터를 그리기
 
 
 	// 모두 사용한 버퍼 해제
