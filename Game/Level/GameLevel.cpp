@@ -124,6 +124,9 @@ void GameLevel::LoadMap(const std::string& filename)
 			// 타겟 (목표 위치)
 		case 't':
 			SpawnActor<Target>(position);
+
+			// 목표 스코어 증가 처리
+			++targetScore;
 			break;
 		}
 
