@@ -59,7 +59,7 @@ namespace Craft
 }
 
 // 타입 시스템을 사용하는 클래스에 배치할 매크로
-// 반복적인 코드 자동화를 할 때 많이 활용
+// 반복적인 코드 자동화를 할 때 많이 활용.
 #define TYPE_DECLARATIONS(Type, ParentType)									\
 	using super = ParentType;												\
 protected:																	\

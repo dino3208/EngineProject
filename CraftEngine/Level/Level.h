@@ -2,6 +2,7 @@
 
 #include <Core/Core.h>
 #include <Actor/Actor.h>
+#include <Core/CraftObject.h>
 #include <memory> // 스마트 포인터
 #include <vector> // 동적 배열
 
@@ -13,8 +14,13 @@ namespace Craft
 	// : shared_from_this() / :weak_from_this() 사용하기 위해
 	// : shared_from_this() - this 포인터를 shared_ptr로 변환
 	// : weak_from_this() - this 포인터를 weak_ptr로 변환
-	class CRAFT_API Level : public std::enable_shared_from_this<Level>
+	class CRAFT_API Level : 
+		public CraftObject, 
+		public std::enable_shared_from_this<Level>
 	{
+		// 커스텀 타입 설정
+		TYPE_DECLARATIONS(Level, CraftObject)
+
 		// friend 선언
 		friend class Engine;
 
@@ -89,7 +95,7 @@ namespace Craft
 		// 레벨에 추가 요청된 액터를 저장해두는 목록
 		// 현재 프레임을 처리하는 과정에서 액터 추가 요청이 발생하면,
 		// 해당 액터를 바로 추가하면 기존 액터 처리에 문제가 발생할 수 있어서
-		// 현재 프레임을 모두 처리한 후에 추가 요청된 액터를 actorList로 옮김
+		// 현재 프레임을 모두 처리한 후에 추가 요청된 액터를 actorList로 옮김.
 		std::vector<std::shared_ptr<Actor>> addRequestedActorList;
 	};
 }

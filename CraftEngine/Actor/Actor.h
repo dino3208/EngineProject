@@ -10,10 +10,10 @@
 
 namespace Craft
 {
-	// 전방선언
+	// 전방선언.
 	class Level;
 
-	// 가상 공간에 배치될 모든 액터의 기본 클래스
+	// 가상 공간에 배치될 모든 액터의 기본 클래스.
 	class CRAFT_API Actor : public CraftObject
 	{
 		// 매크로 지정할 때 끝에 세미콜론 넣지 않도록 주의
