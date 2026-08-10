@@ -147,7 +147,7 @@ void GameLevel::OnInitialized()
 	Level::OnInitialized();
 
 	// 파일을 읽어서 맵 로드
-	LoadMap("Stage1.txt");
+	LoadMap("Stage2.txt");
 }
 
 void GameLevel::Draw()
