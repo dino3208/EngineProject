@@ -24,6 +24,14 @@ EnemySpawner::EnemySpawner()
 
 void EnemySpawner::Tick(float deltaTime)
 {
+	super::Tick(deltaTime);
+
+	timer.Tick(deltaTime);
+	if (!timer.IsTimeOut())
+	{
+		return;
+	}
+
 	// 타이머 초기화
 	timer.Reset();
 

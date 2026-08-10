@@ -34,6 +34,9 @@ namespace Craft
 		// 렌더러에 필요한 데이터 제출
 		Renderer::Get().Submit(image, position, color, sortingOrder);
 	}
+	void Actor::OnCollision(const std::shared_ptr<Actor>& other)
+	{
+	}
 	void Actor::Destroy()
 	{
 		// 삭제 예약 설정
