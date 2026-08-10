@@ -83,7 +83,3 @@ namespace Craft
 	};
 
 }
-
-class Actor
-{
-};

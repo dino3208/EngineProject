@@ -1,6 +1,8 @@
 ﻿#include "Player.h"
 #include <Input/Input.h>
 #include <Level/GameLevel.h>
+#include <Game/Game.h>
+
 
 using namespace Craft;
 Player::Player(const Vector2& position)
@@ -21,7 +23,11 @@ void Player::Tick(float deltaTime)
 	if (Input::Get().GetKeyDown(VK_ESCAPE))
 	{
 		// 종료 처리
-		QuitGame();
+		//QuitGame();
+		
+		// 메뉴 토글
+		Game& game = dynamic_cast<Game&>(Engine::Get());
+		game.ToggleMenu();
 		return;
 	}
 	// 이동 처리를 위해 GameLevel 객체 얻어오기
