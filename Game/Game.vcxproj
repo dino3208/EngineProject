@@ -99,6 +99,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Actor\Box.cpp" />
+    <ClCompile Include="Actor\DestroyEffect.cpp" />
     <ClCompile Include="Actor\Ground.cpp" />
     <ClCompile Include="Actor\Player.cpp" />
     <ClCompile Include="Actor\Target.cpp" />
@@ -109,9 +110,11 @@
     <ClCompile Include="Level\MenuLevel.cpp" />
     <ClCompile Include="Level\TestLevel.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Util\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor\Box.h" />
+    <ClInclude Include="Actor\DestroyEffect.h" />
     <ClInclude Include="Actor\Ground.h" />
     <ClInclude Include="Actor\Player.h" />
     <ClInclude Include="Actor\Target.h" />
@@ -121,6 +124,7 @@
     <ClInclude Include="Level\GameLevel.h" />
     <ClInclude Include="Level\MenuLevel.h" />
     <ClInclude Include="Level\TestLevel.h" />
+    <ClInclude Include="Util\Timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

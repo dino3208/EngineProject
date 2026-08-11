@@ -22,6 +22,9 @@ public:
 
 	// 메뉴/게임 레벨을 전환하는 함수
 	void ToggleMenu();
+	
+	// 게임 재시작 함수.
+	void RestartGame();
 
 private:
 	// 메뉴 레벨과 게임 레벨을 관리할 배열

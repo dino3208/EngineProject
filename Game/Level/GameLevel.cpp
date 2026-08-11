@@ -108,6 +108,12 @@ bool GameLevel::CanMove(
 					// 박스 밀림 처리
 					boxActor->SetPosition(newPosition);
 
+					// RTTI로 타입 변환 후 숫자를 올리는 OnPushed 함수 호출
+					if (auto box = std::dynamic_pointer_cast<Box>(boxActor))
+					{
+						box->OnPushed();
+					}
+
 					// 점수 확인
 					isGameClear = CheckGameClear();
 
@@ -142,12 +148,37 @@ bool GameLevel::CanMove(
 	// 예상치 못한 처리 - 이동 불가
 	return false;
 }
+
+void GameLevel::Restart()
+{
+	// 기존 액터 제거.
+	if (!actorList.empty())
+	{
+		for (const auto& actor : actorList)
+		{
+			actor->Destroy();
+		}
+	}
+
+	// 액터 목록 초기화.
+	actorList.clear();
+
+	// 맵 처음부터 다시 로드.
+	OnInitialized();
+}
+
 void GameLevel::OnInitialized()
 {
 	Level::OnInitialized();
 
+	// 게임 클리어 초기화.
+	isGameClear = false;
+
+	// 점수 초기화.
+	targetScore = 0;
+
 	// 파일을 읽어서 맵 로드
-	LoadMap("Stage2.txt");
+	LoadMap("Test.txt");
 }
 
 void GameLevel::Draw()

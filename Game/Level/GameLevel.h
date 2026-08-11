@@ -17,6 +17,11 @@ public:
 		const Craft::Vector2& playerPosition,
 		const Craft::Vector2& nextPosition
 	);
+
+	// 게임 레벨 재시작 함수.
+	void Restart();
+
+
 private:
 	// 레벨 초기화 함수
 	virtual void OnInitialized() override;

@@ -1,6 +1,7 @@
 ﻿#include "Game.h"
 #include <Level/GameLevel.h>
 #include <Level/MenuLevel.h>
+#include <Input/Input.h>
 
 
 Game::Game()
@@ -27,3 +28,17 @@ void Game::ToggleMenu()
 	mainLevel = levelList[nextState];
 	state = static_cast<State>(nextState);
 }
+
+void Game::RestartGame()
+{
+	std::shared_ptr<GameLevel> gameLevel = std::dynamic_pointer_cast<GameLevel>(levelList[0]);
+	if (!gameLevel)
+	{
+		return;
+	}
+
+	gameLevel->Restart();
+	mainLevel = gameLevel;
+	state = State::GamePlay;
+}
+

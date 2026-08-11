@@ -1,4 +1,6 @@
-﻿#include "MenuLevel.h"
+﻿#include <Engine/Engine.h>
+#include <Level/GameLevel.h>
+#include "MenuLevel.h"
 #include <Game/Game.h>
 #include <Input/Input.h>
 #include <Render/Renderer.h>
@@ -16,6 +18,19 @@ MenuLevel::MenuLevel()
 				// 메뉴 토글 함수 호출
 				Game& game = dynamic_cast<Game&>(Engine::Get());
 				game.ToggleMenu();
+			}
+		)
+	);
+	itemList.emplace_back(
+		std::make_unique<MenuItem>(
+			"Restart Game",
+			[]()
+			{
+				// 메뉴 토글 함수 호출
+				Game& game = dynamic_cast<Game&>(Engine::Get());
+				//game.ToggleMenu();
+				//game.AddNewLevel<GameLevel>();
+				game.RestartGame();
 			}
 		)
 	);
@@ -50,7 +65,7 @@ void MenuLevel::Tick(float deltaTime)
 	const int length = static_cast<int>(itemList.size());
 	if (Input::Get().GetKeyDown(VK_UP))
 	{
-		// 인덱스 돌리기 (+방향)
+		// 인덱스 돌리기 (-방향)
 		currentIndex = (currentIndex - 1 + length) % length;
 	}
 	if (Input::Get().GetKeyDown(VK_DOWN))
@@ -70,6 +85,9 @@ void MenuLevel::Tick(float deltaTime)
 
 		// 메뉴 아이템에 저장된 로직 실행
 		itemList[currentIndex]->onSelected();
+
+		// 인덱스 초기화.
+		currentIndex = 0;
 	}
 }
 
