@@ -2,6 +2,7 @@
 #include <Level/Level.h>
 #include <Input/Input.h>
 #include <Render/Renderer.h>
+#include <Physics/CollisionSystem.h>
 
 #include <iostream>
 #include <Windows.h> // #include <chrono>
@@ -30,6 +31,9 @@ namespace Craft // 이걸 CPP에서 작성함으로 인해서 괄호 안에 정�
 		renderer = std::make_unique<Renderer>(
 			Vector2(setting.width, setting.height)
 		);
+
+		// 콜리전 시스템 객체 생성
+		collisionSystem = std::make_unique<CollisionSystem>();
 	}
 	Engine::~Engine()
 	{
@@ -91,6 +95,9 @@ namespace Craft // 이걸 CPP에서 작성함으로 인해서 괄호 안에 정�
 				// 게임 업데이트
 				Tick(deltaTime);
 
+				// 충돌 처리
+				ProcessCollision();
+
 				// 화면 그리기
 				Draw();
 
@@ -116,6 +123,9 @@ namespace Craft // 이걸 CPP에서 작성함으로 인해서 괄호 안에 정�
 				if (mainLevel)
 				{
 					mainLevel->ProcessAddAndDestroyActors();
+					
+					// 액터의 이전 상태 저장 처리
+					mainLevel->SavePreviousActorStates();
 				}
 
 				// 입력 상태 저장
@@ -202,6 +212,19 @@ namespace Craft // 이걸 CPP에서 작성함으로 인해서 괄호 안에 정�
 		}
 
 		renderer->Draw();
+	}
+
+	void Engine::ProcessCollision()
+	{
+		// 예외처리
+		if (!mainLevel || !collisionSystem)
+		{
+			return;
+		}
+
+		// 충돌 처리
+		// 의존성 주입 (Dependency Injection)
+		collisionSystem->ProcessCollision(mainLevel->actorList);
 	}
 
 	void Engine::SavePreviousInputStates()
