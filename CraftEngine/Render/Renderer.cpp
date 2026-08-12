@@ -94,6 +94,22 @@ namespace Craft
 		// 렌더큐에 명령 추가
 		renderQueue.emplace_back(command);
 	}
+	void Renderer::Submit(const std::vector<std::string>& image, const Vector2& position, Color color, int sortingOrder)
+	{
+		for (int i = 0; i < image.size() ; ++i)
+
+		{
+			// 렌더 명령 생성 및 값 설정
+			RenderCommand command;
+			command.image = image[i];
+			command.position = Vector2(position.x, position.y + i);
+			command.color = color;
+			command.sortingOrder = sortingOrder;
+
+			// 렌더큐에 명령 추가
+			renderQueue.emplace_back(command);
+		}
+	}
 	void Renderer::Draw()
 	{
 		// 화면(이미지/프레임) 지우기

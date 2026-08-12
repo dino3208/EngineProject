@@ -3,12 +3,43 @@
 #include <Engine/Engine.h>
 #include <Actor/EnemyBullet.h>
 #include <Level/Level.h>
+#include <Level/GameLevel.h>
 #include <Actor/PlayerBullet.h>
 #include <Actor/DestroyEffect.h>
+#include <cassert>
 
 using namespace Craft;
-Enemy::Enemy(const std::string& image, int yPosition)
-	: Actor(image)
+
+// 생성할 적 이미지 타입 배열
+static std::string enemyImages[] =
+{
+	";:^:;",
+	"zZwZz",
+	"oO@Oo",
+	"<-=->",
+	")qOp(",
+};
+
+// 보스 이미지
+static std::vector<std::string> bossShape =
+{          
+        "<-=->)qOp()qOp()qOp()qOp()qOp()qOp()qOp(<-=->",
+        ";:^:;)qOp()qOp()qOp()qOp()qOp()qOp()qOp(;:^:;",
+        "<-=->)qOp()qOp()qOp()qOp()qOp()qOp()qOp(<-=->",
+        ";:^:;)qOp()qOp()qOp()qOp()qOp()qOp()qOp(;:^:;",
+        ";:^:;)qOp()qOp()qOp()qOp()qOp()qOp()qOp(;:^:;",
+        ";:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;",
+        ";:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;",
+        "oO@Oo     oO@Oo     oO@Oo     oO@Oo     oO@Oo",
+		"oO@Oo     oO@Oo     oO@Oo     oO@Oo     oO@Oo",
+		"oO@Oo     oO@Oo     oO@Oo     oO@Oo     oO@Oo",
+		"oO@Oo     oO@Oo     oO@Oo     oO@Oo     oO@Oo",
+		"oO@Oo     oO@Oo     oO@Oo     oO@Oo     oO@Oo",
+};
+
+// 일반 적 생성자
+Enemy::Enemy(EnemyType enemyType, int yPosition)
+	: Actor(enemyImages[static_cast<int>(enemyType)])
 {
 	// 랜덤 (오른쪽 또는 왼쪽으로 이동할 지 결정)
 	int random = Util::RandomRange(1, 10);
@@ -32,33 +63,81 @@ Enemy::Enemy(const std::string& image, int yPosition)
 
 	// 발사 타이머 시간 설정 (1초에서 3초 사이의 시간을 랜덤으로)
 	timer.SetTargetTime(Util::RandomRange(1.0f, 3.0f));
+
+	if (enemyType == EnemyType::Boss)
+	{
+		scoreValue = 1000;
+	}
+	else
+	{
+		scoreValue =(static_cast<int>(enemyType) + 1) * 500;
+	}
 }
+
+// 보스 생성자
+Enemy::Enemy(EnemyType enemyType, int xPosition, int yPosition)
+	: Actor(bossShape)
+{
+	// 랜덤 (오른쪽 또는 왼쪽으로 이동할 지 결정)
+	int random = Util::RandomRange(1, 10);
+
+	// 랜덤으로 선택된 수가 짝수/홀수 여부에 따라 방향 결정
+	if (random % 2 == 0)
+	{
+		// 화면 오른쪽에 생성(이동은 왼쪽 방향)
+		direction = MoveDirection::Left;
+	}
+	else
+	{
+		// 화면 왼쪽에 생성 (이동은 오른쪽 방향)
+		direction = MoveDirection::Right;
+	}
+
+	// 위치 설정
+	SetPosition(Vector2(static_cast<int>(xPosition), yPosition));
+
+	scoreValue = 1000;
+
+}
+
+// 적 타입 갯수 확인 함수
+int Enemy::GetEnemyTypeCount()
+{
+	return sizeof(enemyImages) / sizeof(enemyImages[0]);
+}
+
+
+void Enemy::Move(float deltaTime)
+{
+	// 이동
+	float dir = direction == MoveDirection::Left ? -1.0f : 1.0f;
+	xPosition += dir * moveSpeed * deltaTime;
+
+	// 좌표 검사
+	// 왼쪽으로 벗어나는 경우 오른쪽 방향전환 실행
+	if (xPosition <= 0)
+	{
+		direction = MoveDirection::Right;
+	}
+
+	// 오른쪽으로 벗어나는 경우 왼쪽 방향 전환
+	if (xPosition + width >= Engine::Get().GetWidth() - 1)
+	{
+		direction = MoveDirection::Left;
+	}
+
+	// 위치 설정
+	SetPosition(Vector2(static_cast<int>(xPosition), GetPosition().y));
+}
+
 
 void Enemy::Tick(float deltaTime)
 {
 	super::Tick(deltaTime);
 
-		// 이동
-		float dir = direction == MoveDirection::Left ? -1.0f : 1.0f;
-		xPosition += dir * moveSpeed * deltaTime;
+	// 이동 함수 호출
+	Move(deltaTime);
 
-		// 좌표 검사 (왼쪽으로 벗어나는 경우)
-		if (xPosition + width < 0)
-		{
-			Destroy();
-			return;
-		}
-
-		// 오른쪽으로 벗어나는 경우
-		if (xPosition > Engine::Get().GetWidth() - 1)
-		{
-			Destroy();
-			return;
-		}
-
-		// 위치 설정
-		SetPosition(Vector2(static_cast<int>(xPosition), GetPosition().y));
-		
 		// 발사
 
 		// 타이머 시간 업데이트
@@ -103,6 +182,16 @@ void Enemy::OnCollision(const std::shared_ptr<Actor>& other)
 		if (GetOwner())
 		{
 			GetOwner()->SpawnActor<DestroyEffect>(GetPosition());
+			
+			// 적 처치시 점수 추가
+			auto gameLevel = std::dynamic_pointer_cast<GameLevel>(GetOwner());
+			
+			assert(gameLevel != nullptr && "Owner must be a GameLevel!");
+
+			if (gameLevel)
+			{
+				gameLevel->AddScore(scoreValue);
+			}
 		}
 	}
 

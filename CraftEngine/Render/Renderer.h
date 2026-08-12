@@ -58,6 +58,14 @@ namespace Craft
 			int sortingOrder = 0
 		);
 
+		// 다중문자열 위한 오버로딩
+		void Submit(
+			const std::vector<std::string>& image,
+			const Vector2& position,
+			Color color = Color::White,
+			int sortingOrder = 0
+		);
+
 		// Draw 이벤트 함수 - Engine에서 호출
 		void Draw();
 

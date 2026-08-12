@@ -11,6 +11,8 @@
 
 #include <iostream>
 #include <cassert>
+#include "GameLevel.h"
+#include "GameLevel.h"
 
 using namespace Craft;
 bool GameLevel::CanMove(

@@ -4,6 +4,7 @@
 
 namespace Craft
 {
+	// 한줄 문자열
 	Actor::Actor(
 		const std::string& image,
 		const Vector2& position,
@@ -12,6 +13,16 @@ namespace Craft
 		width(static_cast<int>(image.size()))
 	{
 	}
+
+	Actor::Actor(
+		const std::vector<std::string>& images, 
+		const Vector2& position, 
+		Color color)
+		: images(images), position(position), color(color),
+		width(), height()
+	{
+	}
+
 	Actor::~Actor()
 	{
 	}
@@ -31,8 +42,16 @@ namespace Craft
 			return;
 		}
 
-		// 렌더러에 필요한 데이터 제출
-		Renderer::Get().Submit(image, position, color, sortingOrder);
+		if (!images.empty())
+		{
+			// 렌더러에 필요한 데이터 제출 (다중 문자열)
+			Renderer::Get().Submit(images, position, color, sortingOrder);
+		}
+		else
+		{
+			// 렌더러에 필요한 데이터 제출
+			Renderer::Get().Submit(image, position, color, sortingOrder);
+		}
 	}
 	void Actor::OnCollision(const std::shared_ptr<Actor>& other)
 	{

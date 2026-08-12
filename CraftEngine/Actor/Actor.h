@@ -5,8 +5,10 @@
 #include <Math/Color.h>
 #include <Core/CraftObject.h>
 
+
 #include <memory> // std::weak_ptr 사용을 위해
 #include <string>
+#include <vector>
 
 namespace Craft
 {
@@ -22,6 +24,13 @@ namespace Craft
 	public:
 		Actor(
 			const std::string& image = "", 
+			const Vector2& position = Vector2::Zero,
+			Color color = Color::White
+		);
+
+		// 다중 문자열
+		Actor(
+			const std::vector<std::string>& images,
 			const Vector2& position = Vector2::Zero,
 			Color color = Color::White
 		);
@@ -90,11 +99,17 @@ namespace Craft
 		// 화면에 그릴 글자
 		std::string image;
 
+		// 화면에 그릴 다중 문자열
+		std::vector<std::string> images;
+
 		// 글자 색상
 		Color color = Color::White;
 
 		// 글자 길이
 		int width = 0;
+
+		// 문자열 높이
+		int height = 0;
 
 		// 렌더링 순서
 		int sortingOrder = 0;

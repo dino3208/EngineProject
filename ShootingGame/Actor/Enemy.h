@@ -14,10 +14,31 @@ class Enemy : public Craft::Actor
 	{
 		None = -1,
 		Left,
-		Right
+		Right,
+		Down
 	};
 public:
-	Enemy(const std::string& image = "(oOo)", int yPosition = 5);
+
+	// 적 타입 종류
+	enum class EnemyType
+	{
+		Type1,
+		Type2,
+		Type3,
+		Type4,
+		Type5,
+		Boss,
+	};
+
+	// 적 생성자
+	Enemy(EnemyType enemyType, int yPosition);
+
+	// 보스 생성자
+	Enemy(EnemyType enemyType, int xPosition, int yPosition);
+
+	// 적 타입 갯수 반환 함수
+	static int GetEnemyTypeCount();
+
 
 private:
 	// 이벤트 함수 오버라이드
@@ -32,9 +53,16 @@ private:
 
 	// 좌우 이동 처리를 위한 변수
 	float xPosition = 0.0f;
+	float yPosition = 0.0f;
 	float moveSpeed = 5.0f;
+
+	// 이동 함수
+	void Move(float deltaTime);
 
 	// 발사 타이머
 	Timer timer;
+
+	// 적 처치 점수
+	int scoreValue = 0;
 };
 
