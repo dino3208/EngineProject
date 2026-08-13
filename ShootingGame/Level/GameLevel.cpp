@@ -2,46 +2,49 @@
 #include <Actor/Player.h>
 #include <Actor/EnemySpawner.h>
 
-void GameLevel::AddScore(int scoreToAdd)
+namespace ShootingGame
 {
-	score += scoreToAdd;
-}
-
-int GameLevel::GetScore() const
-{
-	return score;;
-}
-
-void GameLevel::OnInitialized()
-{
-	Level::OnInitialized();
-
-	// 플레이어 액터 추가
-	SpawnActor<Player>();
-
-	// 적 생성기 액터 추가
-	SpawnActor<EnemySpawner>();
-
-	// 보스 생성기 액터 추가
-	SpawnActor<BossSpawner>();
-	
-	score = 0;
-}
-
-void GameLevel::Restart()
-{
-	// 기존 액터 제거.
-	if (!actorList.empty())
+	void GameLevel::AddScore(int scoreToAdd)
 	{
-		for (const auto& actor : actorList)
-		{
-			actor->Destroy();
-		}
+		score += scoreToAdd;
 	}
 
-	// 액터 목록 초기화.
-	actorList.clear();
+	int GameLevel::GetScore() const
+	{
+		return score;;
+	}
 
-	// 맵 처음부터 다시 로드.
-	OnInitialized();
+	void GameLevel::OnInitialized()
+	{
+		Level::OnInitialized();
+
+		// 플레이어 액터 추가
+		SpawnActor<Player>();
+
+		// 적 생성기 액터 추가
+		SpawnActor<EnemySpawner>();
+
+		// 보스 생성기 액터 추가
+		SpawnActor<BossSpawner>();
+
+		score = 0;
+	}
+
+	void GameLevel::Restart()
+	{
+		// 기존 액터 제거.
+		if (!actorList.empty())
+		{
+			for (const auto& actor : actorList)
+			{
+				actor->Destroy();
+			}
+		}
+
+		// 액터 목록 초기화.
+		actorList.clear();
+
+		// 맵 처음부터 다시 로드.
+		OnInitialized();
+	}
 }

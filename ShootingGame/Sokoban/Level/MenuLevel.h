@@ -4,49 +4,49 @@
 #include <string>
 
 
-
-// 메뉴 아이템 구조체
-struct MenuItem
-{
-	// 메뉴 선택시 실행할 로직 저장을 위한 함수 포인터
-	using OnSelected = void(*)(); // typedef void (*OnSelected)(); 동일
-
-	// 생성자
-	MenuItem(const std::string& text, OnSelected onSelected)
-		: text(text), onSelected(onSelected)
+namespace Sokoban
+{// 메뉴 아이템 구조체
+	struct MenuItem
 	{
+		// 메뉴 선택시 실행할 로직 저장을 위한 함수 포인터
+		using OnSelected = void(*)(); // typedef void (*OnSelected)(); 동일
 
-	}
-	
-	// 메뉴 텍스트
-	std::string text;
+		// 생성자
+		MenuItem(const std::string& text, OnSelected onSelected)
+			: text(text), onSelected(onSelected)
+		{
 
-	// 메뉴를 선택했을 때 실행할 로직
-	OnSelected onSelected = nullptr;
-};
+		}
 
-class MenuLevel : public Craft::Level
-{
-public:
-	MenuLevel();
+		// 메뉴 텍스트
+		std::string text;
 
-private:
-	// 이벤트 함수 오버라이드
-	virtual void Tick(float deltaTime) override;
-	virtual void Draw() override;
+		// 메뉴를 선택했을 때 실행할 로직
+		OnSelected onSelected = nullptr;
+	};
 
-private:
-	// 현재 활성화된 메뉴 아이템 인덱스
-	int currentIndex = 0;
+	class MenuLevel : public Craft::Level
+	{
+	public:
+		MenuLevel();
 
-	// 선택된 메뉴 아이템의 색상
-	Craft::Color selectedColor = Craft::Color::Green;
+	private:
+		// 이벤트 함수 오버라이드
+		virtual void Tick(float deltaTime) override;
+		virtual void Draw() override;
+
+	private:
+		// 현재 활성화된 메뉴 아이템 인덱스
+		int currentIndex = 0;
+
+		// 선택된 메뉴 아이템의 색상
+		Craft::Color selectedColor = Craft::Color::Green;
 
 
-	// 미선택된 메뉴 아이템의 색상
-	Craft::Color unselectedColor = Craft::Color::White;
+		// 미선택된 메뉴 아이템의 색상
+		Craft::Color unselectedColor = Craft::Color::White;
 
-	// 메뉴 아이템 배열
-	std::vector<std::unique_ptr<MenuItem >> itemList;
-};
-
+		// 메뉴 아이템 배열
+		std::vector<std::unique_ptr<MenuItem >> itemList;
+	};
+}

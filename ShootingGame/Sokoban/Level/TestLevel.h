@@ -1,10 +1,11 @@
 ﻿#pragma once
 
 #include <Level/Level.h>
-
-class TestLevel : public Craft::Level
+namespace Sokoban
 {
-public:
-	virtual void OnInitialized() override;
-};
-
+	class TestLevel : public Craft::Level
+	{
+	public:
+		virtual void OnInitialized() override;
+	};
+}
