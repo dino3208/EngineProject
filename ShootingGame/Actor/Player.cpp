@@ -5,6 +5,7 @@
 #include <Actor/PlayerBullet.h>
 #include <Actor/EnemyBullet.h>
 #include <Actor/DestroyEffect.h>
+#include <Game/Game.h>
 
 
 using namespace Craft;
@@ -29,10 +30,22 @@ void Player::Tick(float deltaTime)
 {
 	super::Tick(deltaTime);
 
-	// ESC 키 종료 처리
+	//// ESC 키 종료 처리
+	//if (Input::Get().GetKeyDown(VK_ESCAPE))
+	//{
+	//	QuitGame();
+	//}
+
+	// ESC 종료 처리
 	if (Input::Get().GetKeyDown(VK_ESCAPE))
 	{
-		QuitGame();
+		// 종료 처리
+		//QuitGame();
+
+		// 메뉴 토글
+		Game& game = dynamic_cast<Game&>(Engine::Get());
+		game.ToggleMenu();
+		return;
 	}
 
 	// 방향키 입력에 따른 이동 방향 설정

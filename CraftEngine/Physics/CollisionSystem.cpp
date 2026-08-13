@@ -74,6 +74,12 @@ namespace Craft
 		const std::shared_ptr<Actor>& left,
 		const std::shared_ptr<Actor>& right)
 	{
+		// 충돌 검사 안하도록 설정된 액터는 건너뛰기.
+		if (!left->ShouldCollide() || !right->ShouldCollide())
+		{
+			return false;
+		}
+
 		if (!left || !right)
 		{
 			return false;
@@ -114,10 +120,14 @@ namespace Craft
 
 		// 이전 프레임까지 고려한 y 충돌 영역 계산.
 		const int leftYMin = (leftCurrent.y < leftPrevious.y) ? leftCurrent.y : leftPrevious.y;
-		const int leftYMax = (leftCurrent.y > leftPrevious.y) ? leftCurrent.y : leftPrevious.y;
+   		const int leftYMaxCurrent = leftCurrent.y + left->GetHeight() - 1;
+		const int leftYMaxPrevious = leftPrevious.y + left->GetHeight() - 1;
+		const int leftYMax = (leftYMaxCurrent > leftYMaxPrevious) ? leftYMaxCurrent : leftYMaxPrevious;
 
 		const int rightYMin = (rightCurrent.y < rightPrevious.y) ? rightCurrent.y : rightPrevious.y;
-		const int rightYMax = (rightCurrent.y > rightPrevious.y) ? rightCurrent.y : rightPrevious.y;
+		const int rightYMaxCurrent = rightCurrent.y + right->GetHeight() - 1;
+		const int rightYMaxPrevious = rightPrevious.y + right->GetHeight() - 1;
+		const int rightYMax = (rightYMaxCurrent > rightYMaxPrevious) ? rightYMaxCurrent : rightYMaxPrevious;
 
 		// y좌표 기준으로 충돌이 발생할 수 없는 상황 처리.
 		if (rightYMin > leftYMax)

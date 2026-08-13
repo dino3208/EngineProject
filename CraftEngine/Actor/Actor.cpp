@@ -10,7 +10,7 @@ namespace Craft
 		const Vector2& position,
 		Color color)
 		: image(image), position(position), color(color),
-		width(static_cast<int>(image.size()))
+		width(static_cast<int>(image.size())), height(1)
 	{
 	}
 
@@ -19,7 +19,7 @@ namespace Craft
 		const Vector2& position, 
 		Color color)
 		: images(images), position(position), color(color),
-		width(), height()
+		width(static_cast<int>(images[0].size())), height(static_cast<int>(images.size()))
 	{
 	}
 

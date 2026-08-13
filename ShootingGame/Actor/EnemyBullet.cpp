@@ -6,6 +6,7 @@ using namespace Craft;
 EnemyBullet::EnemyBullet(const Craft::Vector2& position, float moveSpeed)
 	: Actor("#", position, Color::Red),
 	moveSpeed(moveSpeed), yPosition(static_cast<float>(position.y))
+	//moveSpeed(2.0f), yPosition(static_cast<float>(position.y))
 {
 }
 

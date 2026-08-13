@@ -22,15 +22,15 @@ static std::string enemyImages[] =
 
 // 보스 이미지
 static std::vector<std::string> bossShape =
-{          
-        "<-=->)qOp()qOp()qOp()qOp()qOp()qOp()qOp(<-=->",
-        ";:^:;)qOp()qOp()qOp()qOp()qOp()qOp()qOp(;:^:;",
-        "<-=->)qOp()qOp()qOp()qOp()qOp()qOp()qOp(<-=->",
-        ";:^:;)qOp()qOp()qOp()qOp()qOp()qOp()qOp(;:^:;",
-        ";:^:;)qOp()qOp()qOp()qOp()qOp()qOp()qOp(;:^:;",
-        ";:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;",
-        ";:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;",
-        "oO@Oo     oO@Oo     oO@Oo     oO@Oo     oO@Oo",
+{
+		"<-=->)qOp()qOp()qOp()qOp()qOp()qOp()qOp(<-=->",
+		";:^:;)qOp()qOp()qOp()qOp()qOp()qOp()qOp(;:^:;",
+		"<-=->)qOp()qOp()qOp()qOp()qOp()qOp()qOp(<-=->",
+		";:^:;)qOp()qOp()qOp()qOp()qOp()qOp()qOp(;:^:;",
+		";:^:;)qOp()qOp()qOp()qOp()qOp()qOp()qOp(;:^:;",
+		";:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;",
+		";:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;",
+		"oO@Oo     oO@Oo     oO@Oo     oO@Oo     oO@Oo",
 		"oO@Oo     oO@Oo     oO@Oo     oO@Oo     oO@Oo",
 		"oO@Oo     oO@Oo     oO@Oo     oO@Oo     oO@Oo",
 		"oO@Oo     oO@Oo     oO@Oo     oO@Oo     oO@Oo",
@@ -43,7 +43,7 @@ Enemy::Enemy(EnemyType enemyType, int yPosition)
 {
 	// 랜덤 (오른쪽 또는 왼쪽으로 이동할 지 결정)
 	int random = Util::RandomRange(1, 10);
-	
+
 	// 랜덤으로 선택된 수가 짝수/홀수 여부에 따라 방향 결정
 	if (random % 2 == 0)
 	{
@@ -57,7 +57,7 @@ Enemy::Enemy(EnemyType enemyType, int yPosition)
 		direction = MoveDirection::Right;
 		xPosition = 0.0f;
 	}
-	
+
 	// 위치 설정
 	SetPosition(Vector2(static_cast<int>(xPosition), yPosition));
 
@@ -70,7 +70,7 @@ Enemy::Enemy(EnemyType enemyType, int yPosition)
 	}
 	else
 	{
-		scoreValue =(static_cast<int>(enemyType) + 1) * 500;
+		scoreValue = (static_cast<int>(enemyType) + 1) * 500;
 	}
 }
 
@@ -138,30 +138,30 @@ void Enemy::Tick(float deltaTime)
 	// 이동 함수 호출
 	Move(deltaTime);
 
-		// 발사
+	// 발사
 
-		// 타이머 시간 업데이트
-		timer.Tick(deltaTime);
-		if (!timer.IsTimeOut())
-		{
-			return;
-		}
+	// 타이머 시간 업데이트
+	timer.Tick(deltaTime);
+	if (!timer.IsTimeOut())
+	{
+		return;
+	}
 
-		// 발사 가능하다면 타이머 리셋
-		timer.Reset();
+	// 발사 가능하다면 타이머 리셋
+	timer.Reset();
 
-		// 탄약 생성
-		// 생성 위치 설정
-		Vector2 bulletPosition(GetPosition().x + (width / 2), GetPosition().y);
+	// 탄약 생성
+	// 생성 위치 설정
+	Vector2 bulletPosition(GetPosition().x + (width / 2), GetPosition().y);
 
-		// 액터 생성
-		std::shared_ptr<Level> owner = GetOwner();
-		if (owner)
-		{
-			owner->SpawnActor<EnemyBullet>(
-				bulletPosition, Util::RandomRange(10.0f, 20.0f)
-			);
-		}
+	// 액터 생성
+	std::shared_ptr<Level> owner = GetOwner();
+	if (owner)
+	{
+		owner->SpawnActor<EnemyBullet>(
+			bulletPosition, Util::RandomRange(10.0f, 20.0f)
+		);
+	}
 }
 
 void Enemy::OnCollision(const std::shared_ptr<Actor>& other)
@@ -182,10 +182,10 @@ void Enemy::OnCollision(const std::shared_ptr<Actor>& other)
 		if (GetOwner())
 		{
 			GetOwner()->SpawnActor<DestroyEffect>(GetPosition());
-			
+
 			// 적 처치시 점수 추가
 			auto gameLevel = std::dynamic_pointer_cast<GameLevel>(GetOwner());
-			
+
 			assert(gameLevel != nullptr && "Owner must be a GameLevel!");
 
 			if (gameLevel)

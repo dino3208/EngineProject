@@ -9,10 +9,20 @@ using namespace Craft;
 
 EnemySpawner::EnemySpawner()
 {
+	// 충돌 검사 안하도록 처리.
+	shouldCollide = false;
+
 	// 적 생성 타이머 설정
 	timer.SetTargetTime(Util::RandomRange(0.5f, 5.0f));
+	//timer.SetTargetTime(10000.0f);
 }
 
+void EnemySpawner::BeginPlay()
+{
+	super::BeginPlay();
+
+	SpawnEnemy();
+}
 
 void EnemySpawner::Tick(float deltaTime)
 {
@@ -59,7 +69,7 @@ void EnemySpawner::SpawnEnemy()
 
 BossSpawner::BossSpawner()
 {
-
+	shouldCollide = false;
 }
 
 void BossSpawner::Tick(float deltaTime)

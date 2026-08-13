@@ -13,6 +13,7 @@ public:
 	EnemySpawner();
 
 private:
+	virtual void BeginPlay() override;
 	virtual void Tick(float deltaTime) override;
 
 	// 적 생성 함수

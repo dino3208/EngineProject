@@ -71,15 +71,23 @@ namespace Craft
 		// 너비 반환 함수
 		inline int GetWidth() const { return width; }
 
+		// 높이 반환 함수
+		inline int GetHeight() const { return height; }
+
 		// 액터의 이미지 설정 함수
 		inline void ChangeImage(const std::string& newImage)
 		{
 			// 이미지 길이 설정
 			width = static_cast<int>(newImage.size());
 
+			// 이미지 높이 설정
+			height = static_cast<int>(newImage.size());
+
 			// 새로운 글자 값 설정
 			image = newImage;
 		}
+
+		inline bool ShouldCollide() const { return shouldCollide; }
 
 	protected:
 		// BeginPlay 이벤트 처리 여부 플래그
@@ -90,6 +98,9 @@ namespace Craft
 
 		// 삭제 요청 여부 플래그
 		bool hasExpired = false;
+
+		// 콜리전 처리를 할 지 여부를 나타내는 플래그.
+		bool shouldCollide = true;
 
 		// 오너십 - 이 액터를 소유하는 레벨 객체
 		// weak_ptr -> 약참조 (상호참조 방지를 위해)

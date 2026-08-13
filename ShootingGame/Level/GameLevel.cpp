@@ -1,4 +1,4 @@
-﻿#include "GameLevel.h"
+﻿#include <Level/GameLevel.h>
 #include <Actor/Player.h>
 #include <Actor/EnemySpawner.h>
 
@@ -26,4 +26,22 @@ void GameLevel::OnInitialized()
 	SpawnActor<BossSpawner>();
 	
 	score = 0;
+}
+
+void GameLevel::Restart()
+{
+	// 기존 액터 제거.
+	if (!actorList.empty())
+	{
+		for (const auto& actor : actorList)
+		{
+			actor->Destroy();
+		}
+	}
+
+	// 액터 목록 초기화.
+	actorList.clear();
+
+	// 맵 처음부터 다시 로드.
+	OnInitialized();
 }
