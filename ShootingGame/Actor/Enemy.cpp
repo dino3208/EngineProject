@@ -29,15 +29,12 @@ namespace ShootingGame
 			"<-=->)qOp()qOp()qOp()qOp()qOp()qOp()qOp(<-=->",
 			";:^:;)qOp()qOp()qOp()qOp()qOp()qOp()qOp(;:^:;",
 			"<-=->)qOp()qOp()qOp()qOp()qOp()qOp()qOp(<-=->",
-			";:^:;)qOp()qOp()qOp()qOp()qOp()qOp()qOp(;:^:;",
-			";:^:;)qOp()qOp()qOp()qOp()qOp()qOp()qOp(;:^:;",
 			";:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;",
 			";:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;;:^:;",
 			"oO@Oo     oO@Oo     oO@Oo     oO@Oo     oO@Oo",
 			"oO@Oo     oO@Oo     oO@Oo     oO@Oo     oO@Oo",
 			"oO@Oo     oO@Oo     oO@Oo     oO@Oo     oO@Oo",
-			"oO@Oo     oO@Oo     oO@Oo     oO@Oo     oO@Oo",
-			"oO@Oo     oO@Oo     oO@Oo     oO@Oo     oO@Oo",
+			"oO@Oo;:^:;oO@Oo;:^:;oO@Oo;:^:;oO@Oo;:^:;oO@Oo",
 	};
 
 	// 일반 적 생성자
@@ -67,14 +64,8 @@ namespace ShootingGame
 		// 발사 타이머 시간 설정 (1초에서 3초 사이의 시간을 랜덤으로)
 		timer.SetTargetTime(Util::RandomRange(1.0f, 3.0f));
 
-		if (enemyType == EnemyType::Boss)
-		{
-			scoreValue = 1000;
-		}
-		else
-		{
-			scoreValue = (static_cast<int>(enemyType) + 1) * 500;
-		}
+		// TODO 나중에 점수 분화
+		scoreValue = (static_cast<int>(enemyType) + 1) * 500;
 
 		hp = 1;
 	}
@@ -118,7 +109,7 @@ namespace ShootingGame
 	}
 
 	void Enemy::TakeDamage(int damage)
-	{
+ 	{
 		hp -= damage;
 	}
 
@@ -193,7 +184,7 @@ namespace ShootingGame
 			if (owner)
 			{
 				owner->SpawnActor<EnemyBullet>(
-					bulletPosition, Util::RandomRange(20.0f, 50.f)
+					bulletPosition, Util::RandomRange(1.0f, 50.f)
 				);
 			}
 		}
@@ -213,7 +204,8 @@ namespace ShootingGame
 			// 적 HP 감소
 			TakeDamage(1);
 
-			if (hp == 50)
+			//TODO: 소코반 넘어갈 때
+			if (hp == 25)
 			{
 				Game::Get().ChangeGame(State::Sokoban);
 			}

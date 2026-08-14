@@ -42,6 +42,9 @@ namespace Craft
 		virtual void Tick(float deltaTime);
 		virtual void Draw();
 
+		// 액터 정지 여부 반환 함수
+		bool IsPauseImmune() const;
+
 		// 충돌 이벤트 함수
 		virtual void OnCollision(const std::shared_ptr<Actor>& other);
 
@@ -87,6 +90,7 @@ namespace Craft
 			image = newImage;
 		}
 
+		// TODO
 		inline bool ShouldCollide() const { return shouldCollide; }
 
 	protected:
@@ -96,12 +100,15 @@ namespace Craft
 		// 액터 활성화 여부 플래그
 		bool isActive = true;
 
+		// 액터 정지 가능 여부 플래그
+		bool isPauseImmune = false;
+
 		// 삭제 요청 여부 플래그
 		bool hasExpired = false;
 
-		// 콜리전 처리를 할 지 여부를 나타내는 플래그.
+		// TODO 콜리전 처리를 할 지 여부를 나타내는 플래그.
 		bool shouldCollide = true;
-
+		
 		// 오너십 - 이 액터를 소유하는 레벨 객체
 		// weak_ptr -> 약참조 (상호참조 방지를 위해)
 		// 실제 사용 위해서는 해당 위치가 유효한지 확인 필요
@@ -110,7 +117,7 @@ namespace Craft
 		// 화면에 그릴 글자
 		std::string image;
 
-		// 화면에 그릴 다중 문자열
+		// 화면에 그릴 문자열 배열
 		std::vector<std::string> images;
 
 		// 글자 색상

@@ -1,18 +1,23 @@
-﻿#include <Game/Game.h>
+﻿#include <Level/MenuLevel.h>
+#include <Game/Game.h>
 #include <Level/GameLevel.h>
-#include <Level/MenuLevel.h>
+
 #include <Input/Input.h>
-#include <Sokoban/Level/GameLevel.h>
+#include <Sokoban/Level/SGameLevel.h>
 #include <cassert>
 
 namespace ShootingGame
 {
+	class MenuLevel;
 	Game::Game()
 	{
+		instance = this;
+
 		// 두 레벨 생성 및 배열에 추가
 		levelList.emplace_back(std::make_shared<GameLevel>());
 		levelList.emplace_back(std::make_shared<MenuLevel>());
-		// 소코반 레벨 추가
+		
+		// TODO 소코반 넘어갈 때 
 		levelList.emplace_back(std::make_shared<Sokoban::GameLevel>());
 
 		// 시작 상태 설정
@@ -35,6 +40,7 @@ namespace ShootingGame
 		state = static_cast<State>(nextState);
 	}
 
+	// TODO 소코반 넘어갈 때
 	void Game::ChangeGame(State newState)
 	{
 		mainLevel = levelList[(int)newState];
@@ -56,6 +62,7 @@ namespace ShootingGame
 		state = State::GamePlay;
 	}
 
+	// TODO 소코반 넘어갈 때
 	Game* Game::instance = nullptr;
 
 	Game& Game::Get()

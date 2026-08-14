@@ -10,12 +10,17 @@ namespace ShootingGame
 
 	EnemySpawner::EnemySpawner()
 	{
-		// 충돌 검사 안하도록 처리.
+		// TODO 충돌 검사 안하도록 처리.
 		shouldCollide = false;
 
 		// 적 생성 타이머 설정
 		timer.SetTargetTime(Util::RandomRange(0.5f, 5.0f));
 		//timer.SetTargetTime(10000.0f);
+	}
+
+	void EnemySpawner::SetSpawning(bool enable)
+	{
+		enemySpawning = enable;
 	}
 
 	void EnemySpawner::BeginPlay()
@@ -44,26 +49,31 @@ namespace ShootingGame
 
 	void EnemySpawner::SpawnEnemy()
 	{
-		// 적 생성 처리
-
-		// 적 타입 갯수 확인 함수 호출
-		int count = Enemy::GetEnemyTypeCount();
-
-		// 랜덤 인덱스
-		const int randomIndex = Util::RandomRange(0, count - 1);
-
-		// 선택된 인덱스를 EnemyType으로 변환
-		Enemy::EnemyType selectedType = static_cast<Enemy::EnemyType>(randomIndex);
-
-		// 생성 y 위치 (랜덤)
-		int yPosition = Util::RandomRange(1, 10);
-
-		// 적 액터 생성
-		std::shared_ptr<Level> owner = GetOwner();
-		if (owner)
+		if (!enemySpawning)
 		{
-			owner->SpawnActor<Enemy>(selectedType, yPosition);
+			return;
 		}
+
+			// 적 생성 처리
+
+			// 적 타입 갯수 확인 함수 호출
+			int count = Enemy::GetEnemyTypeCount();
+
+			// 랜덤 인덱스
+			const int randomIndex = Util::RandomRange(0, count - 1);
+
+			// 선택된 인덱스를 EnemyType으로 변환
+			Enemy::EnemyType selectedType = static_cast<Enemy::EnemyType>(randomIndex);
+
+			// 생성 y 위치 (랜덤)
+			int yPosition = Util::RandomRange(1, 10);
+
+			// 적 액터 생성
+			std::shared_ptr<Level> owner = GetOwner();
+			if (owner)
+			{
+				owner->SpawnActor<Enemy>(selectedType, yPosition);
+			}
 	}
 
 
@@ -93,19 +103,25 @@ namespace ShootingGame
 	{
 		// 보스 생성 처리
 
-
 		// 보스 타입 지정
 		Enemy::EnemyType selectedBoss = Enemy::EnemyType::Boss;
 
 		// 생성 위치
 		int xPosition = 60;
-		int yPosition = 5;
+		int yPosition = 0;
 
 		// 적 액터 생성
 		std::shared_ptr<Level> owner = GetOwner();
 		if (owner)
 		{
 			owner->SpawnActor<Enemy>(selectedBoss, xPosition, yPosition);
+
+			// 엔진의 FincActor 활용 SetSpawning 함수 실행
+			auto spawner = owner->FindActor<EnemySpawner>();
+			if (spawner)
+			{
+				spawner->SetSpawning(false);
+			}
 		}
 	}
 }

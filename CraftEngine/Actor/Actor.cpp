@@ -31,6 +31,7 @@ namespace Craft
 		// 이벤트 처리했다고 설정
 		hasBeganPlay = true;
 	}
+	
 	void Actor::Tick(float deltaTime)
 	{
 	}
@@ -44,14 +45,18 @@ namespace Craft
 
 		if (!images.empty())
 		{
-			// 렌더러에 필요한 데이터 제출 (다중 문자열)
+			// 렌더러에 필요한 데이터 제출 (문자열 배열)
 			Renderer::Get().Submit(images, position, color, sortingOrder);
 		}
 		else
 		{
-			// 렌더러에 필요한 데이터 제출
+			// 렌더러에 필요한 데이터 제출 (문자열)
 			Renderer::Get().Submit(image, position, color, sortingOrder);
 		}
+	}
+	bool Actor::IsPauseImmune() const
+	{
+		return isPauseImmune;
 	}
 	void Actor::OnCollision(const std::shared_ptr<Actor>& other)
 	{

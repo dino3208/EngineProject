@@ -13,7 +13,8 @@ namespace Craft
 	void Level::OnInitialized()
 	{
 		// 초기화 되었다고 설정
-		hasInitialized = true; // 이걸 추가하지 않아서 SpawnActor에 계속 추가되어서 프레임이 저하되었음.
+		hasInitialized = true; 
+		// 이걸 추가하지 않아서 SpawnActor에 계속 추가되어서 프레임이 저하되었음.
 	}
 
 	void Level::BeginPlay()
@@ -31,13 +32,25 @@ namespace Craft
 			actor->BeginPlay();
 		}
 	}
-	
+
+	void Level::SetPaused(bool paused)
+	{
+		isPaused = paused;
+	}
+
 	void Level::Tick(float deltaTime)
 	{
 		for (std::shared_ptr<Actor>& actor : actorList)
 		{
+			
 			// 검증 - 활성화되지 않았으면 건너뛰기
 			if (!actor->IsActive())
+			{
+				continue;
+			}
+			
+			// 검증 - 액터가 정지무시면 Tick 호출
+			if (isPaused && !actor->IsPauseImmune())
 			{
 				continue;
 			}
@@ -46,6 +59,7 @@ namespace Craft
 			actor->Tick(deltaTime);
 		}
 	}
+
 	void Level::Draw()
 	{
 		for (std::shared_ptr<Actor>& actor : actorList)

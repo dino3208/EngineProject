@@ -1,7 +1,7 @@
 ﻿#include <Engine/Engine.h>
-#include <Level/GameLevel.h>
-#include "MenuLevel.h"
-#include <Game/Game.h>
+#include <Sokoban/Level/SGameLevel.h>
+#include "SMenuLevel.h"
+#include <Sokoban/Game/SGame.h>
 #include <Input/Input.h>
 #include <Render/Renderer.h>
 #include <cassert>

@@ -2,7 +2,7 @@
 
 #include "Actor/Actor.h"
 #include "Util/Util.h"
-#include "Util/Timer.h"
+#include <Sokoban/SUtil/STimer.h>
 
 
 namespace Sokoban

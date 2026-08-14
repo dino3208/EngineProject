@@ -1,5 +1,6 @@
-﻿#include "DestroyEffect.h"
+﻿#include "SDestroyEffect.h"
 #include <Engine/Engine.h>
+#include <Sokoban/SUtil/STimer.h>
 
 namespace Sokoban
 {

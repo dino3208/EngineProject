@@ -33,6 +33,7 @@ namespace Craft
 
 		// 게임 플레이 이벤트 함수
 		virtual void BeginPlay();
+		virtual void SetPaused(bool paused);
 		virtual void Tick(float deltaTime);
 		virtual void Draw();
 
@@ -87,6 +88,9 @@ namespace Craft
 
 		// 액터의 이전 상태 처리 함수
 		void SavePreviousActorStates();
+
+		// 정지여부 변수
+		bool isPaused = false;
 
 	protected:
 		// 초기화 처리 여부 플래그

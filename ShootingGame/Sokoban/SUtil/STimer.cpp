@@ -1,4 +1,4 @@
-﻿#include "Timer.h"
+﻿#include "STimer.h"
 
 namespace Sokoban
 {

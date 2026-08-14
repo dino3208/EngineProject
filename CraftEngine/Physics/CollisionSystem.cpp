@@ -74,7 +74,7 @@ namespace Craft
 		const std::shared_ptr<Actor>& left,
 		const std::shared_ptr<Actor>& right)
 	{
-		// 충돌 검사 안하도록 설정된 액터는 건너뛰기.
+		// TODO 충돌 검사 안하도록 설정된 액터는 건너뛰기.
 		if (!left->ShouldCollide() || !right->ShouldCollide())
 		{
 			return false;

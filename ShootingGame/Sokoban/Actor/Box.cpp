@@ -1,6 +1,6 @@
 ﻿#include "Box.h"
-#include <Actor/DestroyEffect.h>
-#include <Level/GameLevel.h>
+#include <Sokoban/Actor/SDestroyEffect.h>
+#include <Sokoban/Level/SGameLevel.h>
 
 namespace Sokoban
 {
@@ -19,10 +19,10 @@ namespace Sokoban
 	// 카운트 증가에 맞춰서 숫자 증가
 	std::string Box::GetBoxSymbol() const
 	{
-		return std::to_string(count <= 9 ? count : 9);
+		return std::to_string(count <= 5 ? count : 5);
 	}
 
-	// 상자 카운트 9 초과시 폭발
+	// 상자 카운트 5 초과시 폭발
 	void Box::Explode()
 	{
 		if (GetOwner())
@@ -35,9 +35,10 @@ namespace Sokoban
 	void Box::OnPushed()
 	{
 		count++;
-		if (count > 9)
+		if (count > 5)
 		{
 			Explode();
+			this->Destroy();
 		}
 		image = GetBoxSymbol();
 	}

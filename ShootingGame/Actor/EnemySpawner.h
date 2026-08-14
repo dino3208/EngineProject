@@ -12,6 +12,9 @@ namespace ShootingGame
 	public:
 		EnemySpawner();
 
+		// 스폰을 허락해주는 함수
+		void SetSpawning(bool enable);
+
 	private:
 		virtual void BeginPlay() override;
 		virtual void Tick(float deltaTime) override;
@@ -22,6 +25,9 @@ namespace ShootingGame
 	private:
 		// 타이머
 		Timer timer;
+
+		// 적 생성 상태
+		bool enemySpawning = true;
 	};
 
 	// 보스 클래스

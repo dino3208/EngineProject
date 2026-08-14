@@ -1,6 +1,6 @@
-﻿#include "Game.h"
-#include <Level/GameLevel.h>
-#include <Level/MenuLevel.h>
+﻿#include "SGame.h"
+#include <Sokoban/Level/SGameLevel.h>
+#include <Sokoban/Level/SMenuLevel.h>
 #include <Input/Input.h>
 
 namespace Sokoban

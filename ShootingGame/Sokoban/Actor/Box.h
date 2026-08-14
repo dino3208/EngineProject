@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include <Actor/Actor.h>
-#include <Actor/DestroyEffect.h>
+#include <Sokoban/Actor/SDestroyEffect.h>
 
 namespace Sokoban
 {

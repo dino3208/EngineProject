@@ -1,7 +1,7 @@
-﻿#include "Player.h"
+﻿#include "SPlayer.h"
 #include <Input/Input.h>
-#include <Sokoban/Level/GameLevel.h>
-#include <Game/Game.h>
+#include <Sokoban/Level/SGameLevel.h>
+#include <Sokoban/Game/SGame.h>
 
 namespace Sokoban
 {

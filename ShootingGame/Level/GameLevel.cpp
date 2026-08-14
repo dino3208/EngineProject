@@ -1,6 +1,7 @@
 ﻿#include <Level/GameLevel.h>
 #include <Actor/Player.h>
 #include <Actor/EnemySpawner.h>
+#include <UI/CountdownTimer.h>
 
 namespace ShootingGame
 {
@@ -26,6 +27,9 @@ namespace ShootingGame
 
 		// 보스 생성기 액터 추가
 		SpawnActor<BossSpawner>();
+
+		// 타이머 생성
+		SpawnActor<CountdownTimer>();
 
 		score = 0;
 	}

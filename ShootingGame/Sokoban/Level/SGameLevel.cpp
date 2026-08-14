@@ -1,18 +1,18 @@
-﻿#include "GameLevel.h"
+﻿#include "SGameLevel.h"
 
 #include <Sokoban/Actor/Ground.h>
 #include <Sokoban/Actor/Wall.h>
 
-#include <Sokoban/Actor/Player.h>
+#include <Sokoban/Actor/SPlayer.h>
 #include <Sokoban/Actor/Box.h>
 #include <Sokoban/Actor/Target.h>
 
 #include <Render/Renderer.h>
 
+
+#include <Game/Game.h>
 #include <iostream>
 #include <cassert>
-#include "GameLevel.h"
-#include "GameLevel.h"
 
 namespace Sokoban
 {
@@ -194,12 +194,13 @@ namespace Sokoban
 		{
 			// 렌더러를 사용해서 게임 클리어 표시
 			Renderer::Get().Submit(
-				"Game Clear!",
+				"Clear!",
 				Vector2(25, 0)
 			);
+			// TODO 다시 슈팅게임으로 가는 경로
+			ShootingGame::Game::Get().ChangeGame(ShootingGame::State::GamePlay);
 		}
 	}
-
 	void GameLevel::LoadMap(const std::string& filename)
 	{
 		// 최종 경로 조립
@@ -232,14 +233,15 @@ namespace Sokoban
 		// 어서트
 		assert(readSize > 0 && "No data in the stage file.");
 
-		// Todo: 읽은 데이터를 기반으로 로직 제작
 		// 1. 화면에 액터를 그리기
 
 		// 문자열에 저장된 값을 접근할 때 사용할 인덱스
 		int index = 0;
 
 		// 액터 생성에 사용할 위치 값
-		Vector2 position;
+		
+		Vector2 startPosition = Vector2(30, 10); // 시작 위치
+		Vector2 position = startPosition; // 위치 값 조정
 		while (true)
 		{
 			// 종료 조건 - 내용을 모두 읽었는지 파악
@@ -260,7 +262,7 @@ namespace Sokoban
 			if (mapCharacter == '\n')
 			{
 				++position.y;
-				position.x = 0;
+				position.x = startPosition.x;
 				continue;
 			}
 

@@ -2,13 +2,15 @@
 
 #include <Level/Level.h>
 #include <string>
-
+#include <vector>
+#include <memory>
 
 namespace ShootingGame
-{// 메뉴 아이템 구조체
+{
+	// 메뉴 아이템 구조체
 	struct MenuItem
 	{
-		// 메뉴 선택시 실행할 로직 저장을 위한 함수 포인터
+		// 메뉴 선택시 실행할 로직 저장을 위한 함수          r                포인터
 		using OnSelected = void(*)(); // typedef void (*OnSelected)(); 동일
 
 		// 생성자

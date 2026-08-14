@@ -5,6 +5,8 @@
 #include <Input/Input.h>
 #include <Render/Renderer.h>
 #include <cassert>
+#include <vector>
+#include <memory>
 
 namespace ShootingGame
 {

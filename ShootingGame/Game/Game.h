@@ -4,7 +4,8 @@
 #include <vector>
 
 namespace ShootingGame
-{// 레벨 관리에 사용할 상태 열거형
+{
+	// 레벨 관리에 사용할 상태 열거형
 	enum class State
 	{
 		GamePlay = 0,
