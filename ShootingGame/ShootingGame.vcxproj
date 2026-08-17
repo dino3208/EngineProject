@@ -21,8 +21,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -114,7 +114,7 @@
     <ClCompile Include="Sokoban\Level\SMenuLevel.cpp" />
     <ClCompile Include="Sokoban\Level\TestLevel.cpp" />
     <ClCompile Include="Sokoban\SUtil\STimer.cpp" />
-    <ClCompile Include="UI\CountdownTimer.cpp" />
+    <ClCompile Include="UI\Score.cpp" />
     <ClCompile Include="Util\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -139,7 +139,7 @@
     <ClInclude Include="Sokoban\Level\SMenuLevel.h" />
     <ClInclude Include="Sokoban\Level\TestLevel.h" />
     <ClInclude Include="Sokoban\SUtil\STimer.h" />
-    <ClInclude Include="UI\CountdownTimer.h" />
+    <ClInclude Include="UI\Score.h" />
     <ClInclude Include="Util\Timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

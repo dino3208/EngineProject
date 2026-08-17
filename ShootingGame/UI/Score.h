@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <Actor/Actor.h>
+#include <Level/GameLevel.h>
 
 namespace ShootingGame
 {
@@ -13,6 +14,6 @@ namespace ShootingGame
 
 
 	private:
-		float remainingTime = 0.0f;
+		int score = 0;
 	};
 }

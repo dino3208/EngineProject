@@ -1,7 +1,7 @@
 ﻿#include <Level/GameLevel.h>
 #include <Actor/Player.h>
 #include <Actor/EnemySpawner.h>
-#include <UI/CountdownTimer.h>
+#include <UI/Score.h>
 
 namespace ShootingGame
 {

@@ -65,7 +65,7 @@ namespace ShootingGame
 		timer.SetTargetTime(Util::RandomRange(1.0f, 3.0f));
 
 		// TODO 나중에 점수 분화
-		scoreValue = (static_cast<int>(enemyType) + 1) * 500;
+		scoreValue = (static_cast<int>(enemyType) + 1) * 100;
 
 		hp = 1;
 	}

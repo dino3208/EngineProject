@@ -1,4 +1,4 @@
-﻿#include "CountdownTimer.h"
+﻿#include "Score.h"
 #include <Render/Renderer.h>
 #include <Engine/Engine.h>
 
@@ -21,8 +21,9 @@ namespace ShootingGame
 		// 생성 위치 설정
 		int x = 0;
 		int y = Engine::Get().GetHeight()-1;
-		remainingTime = 3.0f;
-		std::string str = std::to_string(remainingTime);
+		auto gameLevel = std::dynamic_pointer_cast<GameLevel>(GetOwner());
+		score = gameLevel->GetScore();
+		std::string str = std::to_string(score);
 
 		SetPosition(Vector2(x, y));
 		Renderer::Get().Submit(

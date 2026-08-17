@@ -84,7 +84,7 @@
     <ClCompile Include="Sokoban\SUtil\STimer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="UI\CountdownTimer.cpp">
+    <ClCompile Include="UI\Score.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -155,7 +155,7 @@
     <ClInclude Include="Sokoban\SUtil\STimer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="UI\CountdownTimer.h">
+    <ClInclude Include="UI\Score.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
