@@ -14,7 +14,7 @@ namespace ShootingGame
 		shouldCollide = false;
 
 		// 적 생성 타이머 설정
-		timer.SetTargetTime(Util::RandomRange(0.5f, 5.0f));
+		timer.SetTargetTime(Util::RandomRange(0.1f, 2.0f));
 		//timer.SetTargetTime(10000.0f);
 	}
 
