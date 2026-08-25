@@ -92,55 +92,13 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Actor\DestroyEffect.cpp" />
-    <ClCompile Include="Actor\Enemy.cpp" />
-    <ClCompile Include="Actor\EnemyBullet.cpp" />
-    <ClCompile Include="Actor\EnemySpawner.cpp" />
     <ClCompile Include="Actor\Player.cpp" />
-    <ClCompile Include="Actor\PlayerBullet.cpp" />
-    <ClCompile Include="Game\Game.cpp" />
-    <ClCompile Include="Level\GameLevel.cpp" />
-    <ClCompile Include="Level\MenuLevel.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Sokoban\Actor\Box.cpp" />
-    <ClCompile Include="Sokoban\Actor\Ground.cpp" />
-    <ClCompile Include="Sokoban\Actor\SPlayer.cpp" />
-    <ClCompile Include="Sokoban\Actor\SDestroyEffect.cpp" />
-    <ClCompile Include="Sokoban\Actor\Target.cpp" />
-    <ClCompile Include="Sokoban\Actor\TestActor.cpp" />
-    <ClCompile Include="Sokoban\Actor\Wall.cpp" />
-    <ClCompile Include="Sokoban\Game\SGame.cpp" />
-    <ClCompile Include="Sokoban\Level\SGameLevel.cpp" />
-    <ClCompile Include="Sokoban\Level\SMenuLevel.cpp" />
-    <ClCompile Include="Sokoban\Level\TestLevel.cpp" />
-    <ClCompile Include="Sokoban\SUtil\STimer.cpp" />
-    <ClCompile Include="UI\Score.cpp" />
-    <ClCompile Include="Util\Timer.cpp" />
+    <ClCompile Include="Actor\Map.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Actor\DestroyEffect.h" />
-    <ClInclude Include="Actor\Enemy.h" />
-    <ClInclude Include="Actor\EnemyBullet.h" />
-    <ClInclude Include="Actor\EnemySpawner.h" />
     <ClInclude Include="Actor\Player.h" />
-    <ClInclude Include="Actor\PlayerBullet.h" />
-    <ClInclude Include="Game\Game.h" />
-    <ClInclude Include="Level\GameLevel.h" />
-    <ClInclude Include="Level\MenuLevel.h" />
-    <ClInclude Include="Sokoban\Actor\Box.h" />
-    <ClInclude Include="Sokoban\Actor\Ground.h" />
-    <ClInclude Include="Sokoban\Actor\SPlayer.h" />
-    <ClInclude Include="Sokoban\Actor\SDestroyEffect.h" />
-    <ClInclude Include="Sokoban\Actor\Target.h" />
-    <ClInclude Include="Sokoban\Actor\TestActor.h" />
-    <ClInclude Include="Sokoban\Actor\Wall.h" />
-    <ClInclude Include="Sokoban\Game\SGame.h" />
-    <ClInclude Include="Sokoban\Level\SGameLevel.h" />
-    <ClInclude Include="Sokoban\Level\SMenuLevel.h" />
-    <ClInclude Include="Sokoban\Level\TestLevel.h" />
-    <ClInclude Include="Sokoban\SUtil\STimer.h" />
-    <ClInclude Include="UI\Score.h" />
-    <ClInclude Include="Util\Timer.h" />
+    <ClInclude Include="Actor\Map.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

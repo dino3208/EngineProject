@@ -1,13 +1,12 @@
-﻿#include <Engine/Engine.h>
-#include <Game/Game.h>
-#include <Level/GameLevel.h>
+﻿#include <cmath>
+#include <iostream>
 
 int main()
 {
-	// 엔진 객체 생성 및 실행
-	//Craft::Engine engine;
-	//engine.AddNewLevel<GameLevel>();
-	ShootingGame::Game game;
-	game.Run();
-	return 0;
+	float playerAngle = 0.0f;
+
+	float dx = cosf(playerAngle);
+	float dy = sinf(playerAngle);
+
+	std::cout << "dx: " << dx << ", dy: " << dy << std::endl;
 }
