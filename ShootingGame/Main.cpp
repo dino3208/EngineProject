@@ -1,12 +1,39 @@
-﻿#include <cmath>
+﻿#include <Engine/Engine.h>
+
 #include <iostream>
+#include <cmath>
+#include <vector>
+#include <string>
+
+const std::vector<std::string> mapData =
+{
+	"########",
+	"#......#",
+	"#..##..#",
+	"#......#",
+	"########"
+};
+
+bool IsWall(int x, int y)
+{
+	if (y < 0 || y >= (int)mapData.size())
+	{
+		return true;
+	}
+	if (x < 0 || x >= (int)mapData[y].length())
+	{
+		return true;
+	}
+
+	return mapData[y][x] == '#';
+}
 
 int main()
 {
-	float playerAngle = 0.0f;
+	int playerX = 3;
+	int playerY = 2;
 
-	float dx = cosf(playerAngle);
-	float dy = sinf(playerAngle);
+	bool isWall = IsWall(playerX, playerY);
 
-	std::cout << "dx: " << dx << ", dy: " << dy << std::endl;
+	std::cout << "isWall: " << isWall << std::endl;
 }
