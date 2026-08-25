@@ -54,13 +54,39 @@ float CastRay(float startX, float startY, float angle)
 		{
 			return distance;
 		}
+	}
 
-		return maxDistance;
+	return maxDistance;
+}
+
+const int screenWidth = 40;
+const float FOV = DegToRad(60.0f);
+
+float distances[screenWidth];
+
+void CastAllRays(float playerX, float playerY, float playerAngle)
+{
+	float startAngle = playerAngle - FOV / 2.0f;
+	float angleStep = FOV / screenWidth;
+
+	for (int i = 0; i < screenWidth; ++i)
+	{
+		float rayAngle = startAngle + angleStep * i;
+		distances[i] = CastRay(playerX, playerY, rayAngle);
 	}
 }
 
+
 int main()
 {
-	float distance = CastRay(1.0f, 1.0f, DegToRad(0.0f));
-	std::cout << "distance: " << distance << std::endl;
+	float playerX = 1.0f;
+	float playerY = 1.0f;
+	float playerAngle = DegToRad(0.0f);
+
+	CastAllRays(playerX, playerY, playerAngle);
+	
+	for (int i = 0;i < screenWidth;++i)
+	{
+		std::cout << "distances[" << i << "]: " << distances[i] << std::endl;
+	}
 }
