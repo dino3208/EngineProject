@@ -28,12 +28,39 @@ bool IsWall(int x, int y)
 	return mapData[y][x] == '#';
 }
 
+const float PI = 3.14159265f;
+
+float DegToRad(float degree)
+{
+	return degree * (PI / 180.0f);
+}
+
+float CastRay(float startX, float startY, float angle)
+{
+	const float step = 0.05f;
+	const float maxDistance = 20.0f;
+
+	float rayX = startX;
+	float rayY = startY;
+	float distance = 0.0f;
+
+	while (distance < maxDistance)
+	{
+		rayX += cosf(angle) * step;
+		rayY += sinf(angle) * step;
+		distance += step;
+
+		if (IsWall((int)rayX, (int)rayY))
+		{
+			return distance;
+		}
+
+		return maxDistance;
+	}
+}
+
 int main()
 {
-	int playerX = 3;
-	int playerY = 2;
-
-	bool isWall = IsWall(playerX, playerY);
-
-	std::cout << "isWall: " << isWall << std::endl;
+	float distance = CastRay(1.0f, 1.0f, DegToRad(0.0f));
+	std::cout << "distance: " << distance << std::endl;
 }
