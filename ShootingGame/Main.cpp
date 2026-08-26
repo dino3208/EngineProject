@@ -10,14 +10,14 @@
 #include <string>
 
 const int screenHeight = 100;
-const int screenWidth = 200;
+const int screenWidth = 300;
 
 
 
-const std::vector<std::string> mapData =
+std::vector<std::string> mapData =
 {
 	"########",
-	"#......#",
+	"#..D...#",
 	"#..##..#",
 	"#......#",
 	"########"
@@ -34,7 +34,7 @@ bool IsWall(int x, int y)
 		return true;
 	}
 
-	return mapData[y][x] == '#';
+	return mapData[y][x] == '#' || mapData[y][x] == 'D';
 }
 
 const float PI = 3.14159265f;
@@ -192,9 +192,39 @@ void DrawScreen()
 	//SetTextColor(Craft::Color::White);
 }
 
+// 미니맵
+void DrawMiniMap(float playerX, float playerY)
+{
+	for (int y = 0;y < (int)mapData.size();++y)
+	{
+		for (int x = 0;x < (int)mapData[y].length();++x)
+		{
+			if (x == (int)playerX && y == (int)playerY)
+			{
+				std::cout << 'P';
+			}
+			else
+			{
+				std::cout << mapData[y][x];
+			}
+		}
+		std::cout << std::endl;
+	}
+}
 
+void TryOpenDoor(float playerX, float playerY, float playerAngle)
+{
+	int frontX = (int)(playerX + cosf(playerAngle));
+	int frontY = (int)(playerY + sinf(playerAngle));
 
+	if (frontY < 0 || frontY >= (int)mapData.size()) { return; }
+	if (frontX < 0 || frontX >= (int)mapData[frontY].length()) { return; }
 
+	if (mapData[frontY][frontX] == 'D')
+	{
+		mapData[frontY][frontX] = '.';
+	}
+}
 
 
 int main()
@@ -208,7 +238,7 @@ int main()
 
 	// 회전각
 	const float rotSpeed = DegToRad(90.0f);
-	const float deltaTime = (1.0f / 120.0f);
+	const float deltaTime = 0.5f;
 
 	// 이동속도
 	const float moveSpeed = 3.0f;
@@ -261,10 +291,15 @@ int main()
 			playerY = nextY;
 		}
 
+		if (GetAsyncKeyState('E') & 0x8000)
+		{
+			TryOpenDoor(playerX, playerY, playerAngle);
+		}
 
 		system("cls");
 		CastAllRays(playerX, playerY, playerAngle);
 		DrawScreen();
+		DrawMiniMap(playerX, playerY);
 
 	}
 
