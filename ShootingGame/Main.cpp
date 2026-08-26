@@ -19,7 +19,7 @@ std::vector<std::string> mapData =
 	"########",
 	"#..D...#",
 	"#..##..#",
-	"#......#",
+	"#....K.#",
 	"########"
 };
 
@@ -211,9 +211,14 @@ void DrawMiniMap(float playerX, float playerY)
 		std::cout << std::endl;
 	}
 }
+bool hasKey = false;
 
 void TryOpenDoor(float playerX, float playerY, float playerAngle)
 {
+	if (!hasKey)
+	{
+		return;
+	}
 	int frontX = (int)(playerX + cosf(playerAngle));
 	int frontY = (int)(playerY + sinf(playerAngle));
 
@@ -226,6 +231,20 @@ void TryOpenDoor(float playerX, float playerY, float playerAngle)
 	}
 }
 
+void TryPickUpItem(float playerX, float playerY)
+{
+	int x = (int)playerX;
+	int y = (int)playerY;
+
+	if (y < 0 || y >= (int)mapData.size()) { return; }
+	if (x < 0 || x >= (int)mapData[y].length()) { return; }
+
+	if (mapData[y][x] == 'K')
+	{
+		hasKey = true;
+		mapData[y][x] = '.';
+	}
+}
 
 int main()
 {
@@ -293,6 +312,7 @@ int main()
 
 		if (GetAsyncKeyState('E') & 0x8000)
 		{
+			TryPickUpItem(playerX, playerY);
 			TryOpenDoor(playerX, playerY, playerAngle);
 		}
 
