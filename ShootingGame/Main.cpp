@@ -201,10 +201,71 @@ int main()
 {
 	//SetConsoleOutputCP(437); // 음영 표현 문자 1바이트 숫자코드로 표현 
 
+	// 플레이어 위치, 시야중심각
 	float playerX = 1.0f;
 	float playerY = 1.0f;
 	float playerAngle = DegToRad(0.0f);
 
-	CastAllRays(playerX, playerY, playerAngle);
-	DrawScreen();
+	// 회전각
+	const float rotSpeed = DegToRad(90.0f);
+	const float deltaTime = (1.0f / 120.0f);
+
+	// 이동속도
+	const float moveSpeed = 3.0f;
+
+	// 좌표 변화량
+	float moveX = 0.0f;
+	float moveY = 0.0f;
+
+	// 반복 렌더링
+	while (true)
+	{
+		// 회전
+		if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
+		{
+			break;
+		}
+
+		if (GetAsyncKeyState('A') & 0x8000)
+		{
+			playerAngle -= rotSpeed * deltaTime;
+		}
+		if (GetAsyncKeyState('D') & 0x8000)
+		{
+			playerAngle += rotSpeed * deltaTime;
+		}
+
+		// 이동
+		if (GetAsyncKeyState('W') & 0x8000)
+		{
+			moveX = cosf(playerAngle) * moveSpeed * deltaTime;
+			moveY = sinf(playerAngle) * moveSpeed * deltaTime;
+		}
+		if (GetAsyncKeyState('S') & 0x8000)
+		{
+			moveX = -cosf(playerAngle) * moveSpeed * deltaTime;
+			moveY = -sinf(playerAngle) * moveSpeed * deltaTime;
+		}
+
+		// 이동 후 좌표 (계속 갱신해야 하니 함수 안에 쓰여야 함)
+		float nextX = playerX + moveX;
+		float nextY = playerY + moveY;
+
+		// 각각 축의 움직임마다를 따로 계산
+		if (!IsWall((int)nextX, (int)playerY))
+		{
+			playerX = nextX;
+		}
+		if (!IsWall((int)playerX, (int)nextY))
+		{
+			playerY = nextY;
+		}
+
+
+		system("cls");
+		CastAllRays(playerX, playerY, playerAngle);
+		DrawScreen();
+
+	}
+
 }
