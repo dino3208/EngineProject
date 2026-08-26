@@ -16,6 +16,7 @@
     <ProjectGuid>{3abce722-628f-4744-822b-8f0e771c0661}</ProjectGuid>
     <RootNamespace>ShootingGame</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Dungeon</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -93,12 +94,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Actor\Player.cpp" />
+    <ClCompile Include="Level\DungeonLevel.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Actor\Map.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor\Player.h" />
     <ClInclude Include="Actor\Map.h" />
+    <ClInclude Include="Level\DungeonLevel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
