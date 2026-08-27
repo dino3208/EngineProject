@@ -5,17 +5,22 @@
 // 맵 데이터 Todo: 나중에 파일로 수정하는 형식으로 변환
 std::vector<std::string> mapData =
 {
-	"########",
-	"#..D...#",
-	"#..##..#",
-	"#....K.#",
-	"########"
+	"###########",
+	"#.........#",
+	"#.#######.#",
+	"#.#.....#.#",
+	"#.#.###.#.#",
+	"#...#...#.#",
+	"#.#.#.###.#",
+	"#.#...#...#",
+	"###########"
 };
 
 // 화면 크기 *주의사항* Config\Setting.txt 파일을 수정하고 수정할 것.(일치 필수)
 // 나중에 파일 참고 형식으로 변환
 const int screenHeight = 80;
 const int screenWidth = 240;
+
 
 // 각도->라디안 변환 함수
 const float PI = 3.14159265f;
@@ -127,17 +132,25 @@ void CastAllRays(float playerX, float playerY, float playerAngle)
 // 거리에 따른 벽 표시 글자 변화로 거리감 표현
 char GetWallChar(float distance)
 {
-	if (distance < 3.0f)
+	if (distance < 2.0f)
 	{
 		return '#';
 	}
-	if (distance < 6.0f)
+	if (distance < 3.5f)
+	{
+		return '%';
+	}
+	if (distance < 5.0f)
 	{
 		return ':';
 	}
-	if (distance < 10.0f)
+	if (distance < 7.0f)
 	{
 		return '.';
+	}
+	if (distance < 10.0f)
+	{
+		return ',';
 	}
 	return ' ';
 }
@@ -157,7 +170,10 @@ Craft::Color GetWallColor(float distance)
 	return Craft::Color::Red;
 }
 
-// 아이템 줍기 시도 함수
+// 열쇠 메커니즘
+bool hasKey = false;
+
+// 아이템(열쇠) 줍기 시도 함수
 void TryPickUpItem(float playerX, float playerY)
 {
 	int x = (int)playerX;
@@ -175,8 +191,7 @@ void TryPickUpItem(float playerX, float playerY)
 	}
 }
 
-// 열쇠 메커니즘
-bool hasKey = false;
+
 // 문 열기 시도 함수
 void TryOpenDoor(float playerX, float playerY, float playerAngle)
 {
@@ -198,6 +213,9 @@ void TryOpenDoor(float playerX, float playerY, float playerAngle)
 	}
 }
 
+// 플레이어 랜턴
+const float lanternRadius = 1.0f;
+const float lanternFalloff = 2.0f;
 //---------------------------------------------------------------------------------------//
 
 using namespace Craft;
@@ -250,13 +268,82 @@ void Player::Tick(float deltaTime)
 
 	CastAllRays(playerX, playerY, playerAngle);
 	
+	lanternFrameTimer += deltaTime;
+	if (lanternFrameTimer >= lanternFrameDuration)
+	{
+		lanternFrameTimer -= lanternFrameDuration;
+		lanternFrame = (lanternFrame + 1) % 4;
+	}
 }
+
+void Player::DrawLantern()
+{
+	static const std::vector <std::string> lanternFrames[4] =
+	{
+		{
+		"      )  (   )     ",
+		"    (   ) (  '  )  ",
+		"   ( , ') . (  , ) ",
+		"    '-.,_,.-'  ,'  ",
+		"       ;;|;;       ",
+		"        |=|        ",
+		"        |:|        ",
+		"        |=|        ",
+		"        |:|        ",
+		"        `-'        "
+		},
+		{
+			"    (   )  (       ",
+			"   (  ' ) (   )    ",
+			"  ( . ,') ( , )    ",
+			"   ','-.,_,.-'     ",
+			"       ;:|:;       ",
+			"        |=|        ",
+			"        |:|        ",
+			"        |=|        ",
+			"        |:|        ",
+			"        `-'        "
+		},
+		{
+			"     (  )   (      ",
+			"    )  ( ' )  )    ",
+			"   ( ,' ) . ( ,)   ",
+			"    '-.,_,.-' '    ",
+			"       :;|;:       ",
+			"        |=|        ",
+			"        |:|        ",
+			"        |=|        ",
+			"        |:|        ",
+			"        `-'        "
+		},
+		{
+			"      (  )  )      ",
+			"     ( ) ('  (     ",
+			"    ( ,) . (', )   ",
+			"     ,'-.,_,.-'    ",
+			"       ;;|;;       ",
+			"        |=|        ",
+			"        |:|        ",
+			"        |=|        ",
+			"        |:|        ",
+			"        `-'        "
+		}
+	};
+	Renderer::Get().Submit(lanternFrames[lanternFrame], Vector2(2, screenHeight - 10), Craft::Color::Yellow);
+}
+
 
 void Player::Draw()
 {
 	// 거리에 따른 벽 위아래 그리기로 거리감 표현
 	for (int x = 0;x < screenWidth;++x)
 	{
+		// 랜턴 범위 밖은 그리지 않는 함수
+		if (distances[x] > lanternRadius + lanternFalloff)
+		{
+			continue;
+		}
+
 		int wallHeight = (int)(screenHeight / distances[x]);
 		if (wallHeight > screenHeight)
 		{
@@ -267,15 +354,27 @@ void Player::Draw()
 		int wallTop = (screenHeight / 2) - (wallHeight / 2);
 		int wallBottom = (screenHeight / 2) + (wallHeight / 2);
 
-		for (int y = 0;y < screenHeight;++y)
+		for (int y = 0;y < screenHeight;++y) 
 		{
 			if (y >= wallTop && y <= wallBottom)
 			{
-				std::string ch(1, GetWallChar(distances[x]));
-				Renderer::Get().Submit(ch, Vector2(x, y), GetWallColor(distances[x]));
+				char ch;
+
+				if (distances[x] > lanternRadius)
+				{
+					ch = '.';
+				}
+				else
+				{
+					ch = GetWallChar(distances[x]);
+				}
+				Renderer::Get().Submit(std::string(1,ch), Vector2(x, y), GetWallColor(distances[x]));
 			}
 		}
 	}
+
+	//DrawLantern();
 }
+
 
 
