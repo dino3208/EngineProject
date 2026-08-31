@@ -27,6 +27,12 @@
     <ClCompile Include="Level\DungeonLevel.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="UI\Lantern.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Panel.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor\Player.h">
@@ -36,6 +42,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Level\DungeonLevel.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Lantern.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Panel.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

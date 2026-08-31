@@ -8,5 +8,7 @@ public:
 	bool LoadFile(const std::string& filepath);
 
 	std::vector<std::string> mapData; // 배열
+
+	bool IsWall(int x, int y) const;
 };
 

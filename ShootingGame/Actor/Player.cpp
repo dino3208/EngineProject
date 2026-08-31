@@ -1,25 +1,8 @@
-﻿#include "Player.h"
-#include <Input/Input.h>
+﻿#include <Input/Input.h>
 #include <Render/Renderer.h>
+#include <Engine/Engine.h>
 
-// 맵 데이터 Todo: 나중에 파일로 수정하는 형식으로 변환
-std::vector<std::string> mapData =
-{
-	"###########",
-	"#.........#",
-	"#.#######.#",
-	"#.#.....#.#",
-	"#.#.###.#.#",
-	"#...#...#.#",
-	"#.#.#.###.#",
-	"#.#...#...#",
-	"###########"
-};
-
-// 화면 크기 *주의사항* Config\Setting.txt 파일을 수정하고 수정할 것.(일치 필수)
-// 나중에 파일 참고 형식으로 변환
-const int screenHeight = 80;
-const int screenWidth = 240;
+#include "Player.h"
 
 
 // 각도->라디안 변환 함수
@@ -32,27 +15,12 @@ float DegToRad(float degree)
 // 시야각
 const float FOV = DegToRad(60.0f);
 
-// 벽인지 확인
-bool IsWall(int x, int y)
-{
-	if (y < 0 || y >= (int)mapData.size())
-	{
-		return true;
-	}
-	if (x < 0 || x >= (int)mapData[y].length())
-	{
-		return true;
-	}
-
-	return mapData[y][x] == '#' || mapData[y][x] == 'D';
-}
-
-
 // 화면 가로 넓이 갯수만큼 광선 갯수
-float distances[screenWidth];
+std::vector<float> distances;
 
 // 광선 함수
-float CastRay(float startX, float startY, float angle)
+// map 객체를 기준으로 확인할지 알려줘야 하기 때문에 매개변수 map을 추가
+float CastRay(const Map& map, float startX, float startY, float angle)
 {
 	const float step = 0.05f;
 	const float maxDistance = 20.0f;
@@ -72,7 +40,7 @@ float CastRay(float startX, float startY, float angle)
 		distance += step;
 
 		// 
-		if (IsWall((int)rayX, (int)rayY))
+		if (map.IsWall((int)rayX, (int)rayY)) // 포인터 멤버가 아니라 매개변수
 		{
 			return distance;
 		}
@@ -97,17 +65,17 @@ float CastRay(float startX, float startY, float angle)
 //}
 
 // 광선 여러개 쏘는 함수
-void CastAllRays(float playerX, float playerY, float playerAngle)
+void CastAllRays(const Map& map, float playerX, float playerY, float playerAngle, int viewWidth)
 {
-	float angleStep = FOV / screenWidth;
+	float angleStep = FOV / viewWidth;
 
-	for (int i = 0;i < screenWidth;++i)
+	for (int i = 0;i < viewWidth;++i)
 	{
 		// 비스듬히 쏘는 광선에 의해 외곡되는 광선 보정 (어안렌즈 현상 수정)
 		float offset = angleStep * i - FOV / 2.0f;
 		float rayAngle = playerAngle + offset;
 
-		float rawDistance = CastRay(playerX, playerY, rayAngle);
+		float rawDistance = CastRay(map, playerX, playerY, rayAngle);
 		distances[i] = rawDistance * cosf(offset);
 	}
 }
@@ -174,26 +142,26 @@ Craft::Color GetWallColor(float distance)
 bool hasKey = false;
 
 // 아이템(열쇠) 줍기 시도 함수
-void TryPickUpItem(float playerX, float playerY)
+void TryPickUpItem(Map& map, float playerX, float playerY)
 {
 	int x = (int)playerX;
 	int y = (int)playerY;
 
 	// 화면 밖으로 나가는 것 방지
-	if (y < 0 || y >= (int)mapData.size()) { return; }
-	if (x < 0 || x >= (int)mapData[y].length()) { return; }
+	if (y < 0 || y >= (int)map.mapData.size()) { return; }
+	if (x < 0 || x >= (int)map.mapData[y].length()) { return; }
 
 	// 열쇠인 K 획득시. 열쇠 보유로 전환 + K를 바닥으로 전환
-	if (mapData[y][x] == 'K')
+	if (map.mapData[y][x] == 'K')
 	{
 		hasKey = true;
-		mapData[y][x] = '.';
+		map.mapData[y][x] = '.';
 	}
 }
 
 
 // 문 열기 시도 함수
-void TryOpenDoor(float playerX, float playerY, float playerAngle)
+void TryOpenDoor(Map& map, float playerX, float playerY, float playerAngle)
 {
 	if (!hasKey)
 	{
@@ -203,13 +171,13 @@ void TryOpenDoor(float playerX, float playerY, float playerAngle)
 	int frontY = (int)(playerY + sinf(playerAngle));
 
 	// 화면 밖으로 나가는 경우 방지
-	if (frontY < 0 || frontY >= (int)mapData.size()) { return; }
-	if (frontX < 0 || frontX >= (int)mapData[frontY].length()) { return; }
+	if (frontY < 0 || frontY >= (int)map.mapData.size()) { return; }
+	if (frontX < 0 || frontX >= (int)map.mapData[frontY].length()) { return; }
 
 	// 열쇠가 있을 경우 문인 D를 바닥인 .으로 변환
-	if (mapData[frontY][frontX] == 'D')
+	if (map.mapData[frontY][frontX] == 'D')
 	{
-		mapData[frontY][frontX] = '.';
+		map.mapData[frontY][frontX] = '.';
 	}
 }
 
@@ -222,6 +190,8 @@ using namespace Craft;
 
 void Player::BeginPlay()
 {
+	screenHeight = Craft::Engine::Get().GetHeight();
+	distances.resize(viewWidth);
 }
 
 void Player::Tick(float deltaTime)
@@ -257,86 +227,22 @@ void Player::Tick(float deltaTime)
 	float nextX = playerX + moveX;
 	float nextY = playerY + moveY;
 
-	if (!IsWall((int)nextX, (int)playerY)) {playerX = nextX;}
-	if (!IsWall((int)playerX, (int)nextY)) {playerY = nextY;}
+	if (!map->IsWall((int)nextX, (int)playerY)) {playerX = nextX;}
+	if (!map->IsWall((int)playerX, (int)nextY)) {playerY = nextY;}
 
 	if (Input::Get().GetKeyDown('E'))
 	{
-		TryPickUpItem(playerX, playerY);
-		TryOpenDoor(playerX, playerY, playerAngle);
+		TryPickUpItem(*map, playerX, playerY);
+		TryOpenDoor(*map, playerX, playerY, playerAngle);
 	}
 
-	CastAllRays(playerX, playerY, playerAngle);
-	
-	lanternFrameTimer += deltaTime;
-	if (lanternFrameTimer >= lanternFrameDuration)
-	{
-		lanternFrameTimer -= lanternFrameDuration;
-		lanternFrame = (lanternFrame + 1) % 4;
-	}
+	CastAllRays(*map, playerX, playerY, playerAngle, viewWidth);
 }
-
-void Player::DrawLantern()
-{
-	static const std::vector <std::string> lanternFrames[4] =
-	{
-		{
-		"      )  (   )     ",
-		"    (   ) (  '  )  ",
-		"   ( , ') . (  , ) ",
-		"    '-.,_,.-'  ,'  ",
-		"       ;;|;;       ",
-		"        |=|        ",
-		"        |:|        ",
-		"        |=|        ",
-		"        |:|        ",
-		"        `-'        "
-		},
-		{
-			"    (   )  (       ",
-			"   (  ' ) (   )    ",
-			"  ( . ,') ( , )    ",
-			"   ','-.,_,.-'     ",
-			"       ;:|:;       ",
-			"        |=|        ",
-			"        |:|        ",
-			"        |=|        ",
-			"        |:|        ",
-			"        `-'        "
-		},
-		{
-			"     (  )   (      ",
-			"    )  ( ' )  )    ",
-			"   ( ,' ) . ( ,)   ",
-			"    '-.,_,.-' '    ",
-			"       :;|;:       ",
-			"        |=|        ",
-			"        |:|        ",
-			"        |=|        ",
-			"        |:|        ",
-			"        `-'        "
-		},
-		{
-			"      (  )  )      ",
-			"     ( ) ('  (     ",
-			"    ( ,) . (', )   ",
-			"     ,'-.,_,.-'    ",
-			"       ;;|;;       ",
-			"        |=|        ",
-			"        |:|        ",
-			"        |=|        ",
-			"        |:|        ",
-			"        `-'        "
-		}
-	};
-	Renderer::Get().Submit(lanternFrames[lanternFrame], Vector2(2, screenHeight - 10), Craft::Color::Yellow);
-}
-
 
 void Player::Draw()
 {
 	// 거리에 따른 벽 위아래 그리기로 거리감 표현
-	for (int x = 0;x < screenWidth;++x)
+	for (int x = 0;x < viewWidth;++x)
 	{
 		// 랜턴 범위 밖은 그리지 않는 함수
 		if (distances[x] > lanternRadius + lanternFalloff)
@@ -372,8 +278,6 @@ void Player::Draw()
 			}
 		}
 	}
-
-	//DrawLantern();
 }
 
 

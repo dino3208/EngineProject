@@ -1,16 +1,25 @@
 ﻿#pragma once
 #include "Actor/Actor.h"
+#include "Actor/Map.h"
 
 
 using namespace Craft;
 class Player:public Actor
 {
 public:
+	int viewWidth = 0;
+
 	virtual void BeginPlay() override;
 	virtual void Tick(float deltaTime) override;
 	virtual void Draw() override;
 
+	// Player 클래스는 이제 Map타입의 변수를 갖는 선언
+	// 이 객체를 만들면 자동으로 Map의 기본상태(빈 mapData)로 시작
+	Map* map = nullptr;
+
 protected:
+	int screenHeight = 0;
+
 	// 캐릭터 좌표
 	float playerX = 9.0f;
 	float playerY = 1.0f;
@@ -32,11 +41,5 @@ protected:
 
 	// 열쇠 보유 유무
 	bool hasKey = false;
-
-	// 랜턴
-	int lanternFrame = 0;
-	float lanternFrameTimer = 0.0f;
-	const float lanternFrameDuration = 0.15f; // 프레임 하나당 지속시간
-	void DrawLantern();
 };
 

@@ -93,15 +93,19 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="UI\Lantern.cpp" />
     <ClCompile Include="Actor\Player.cpp" />
     <ClCompile Include="Level\DungeonLevel.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Actor\Map.cpp" />
+    <ClCompile Include="UI\Panel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="UI\Lantern.h" />
     <ClInclude Include="Actor\Player.h" />
     <ClInclude Include="Actor\Map.h" />
     <ClInclude Include="Level\DungeonLevel.h" />
+    <ClInclude Include="UI\Panel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
