@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Actor/Actor.h"
 #include "Actor/Map.h"
-
+#include "UI/TextBox.h"
 
 using namespace Craft;
 class Player:public Actor
@@ -17,6 +17,9 @@ public:
 	// Player 클래스는 이제 Map타입의 변수를 갖는 선언
 	// 이 객체를 만들면 자동으로 Map의 기본상태(빈 mapData)로 시작
 	Map* map = nullptr;
+
+	// Player가 TextBox에 메세지 출력을 요청할 수 있도록 주소 저장
+	TextBox* textBox = nullptr;
 
 protected:
 	// 캐릭터 좌표

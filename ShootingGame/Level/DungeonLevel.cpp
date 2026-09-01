@@ -24,28 +24,36 @@ void DungeonLevel::OnInitialized()
 		"###########"
 	};
 
+	// 시야 박스 크기
 	int viewWidth = 313;
-	int uiPanelWidth = 156;
-
 	int viewHeight = 106;
+	
+	// UI패널 너비
+	int uiPanelWidth = 156;
+	// 텍스트박스 높이
 	int textBoxHeight = 28;
 
-	// Player 객체 생성 + 월드에 등록 -> 이 객체를 제어할 수 있는 쉐어드 포인터 반환
+	// 플레이어 시야 담당 액터 생성 + 크기 설정
 	std::shared_ptr<Player> player = SpawnActor<Player>();
 	// 플레이어한테 레벨이 가진 맵의 주소 저장 명령
 	player->map = &map; 
 	player->viewWidth = viewWidth;
 	player->viewHeight = viewHeight;
 
+	// UI 패널 액터 생성 + 크기/위치 설정
 	std::shared_ptr<Panel> panel = SpawnActor<Panel>();
 	panel->startX = viewWidth;
 	panel->panelWidth = uiPanelWidth;
 	panel->panelHeight = viewHeight;
 
+
+	SpawnActor<Lantern>();
+
+	// 하단 메세지 출력용 텍스트박스 생성 + 크기/위치 설정
 	std::shared_ptr<TextBox> textBox = SpawnActor<TextBox>();
 	textBox->startY = viewHeight;
 	textBox->boxWidth = viewWidth + uiPanelWidth;
 	textBox->boxHeight = textBoxHeight;
+	player->textBox = textBox.get();
 
-	SpawnActor<Lantern>();
 }
