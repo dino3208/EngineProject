@@ -49,9 +49,6 @@ float CastRay(const Map& map, float startX, float startY, float angle)
 	return maxDistance;
 }
 
-
-
-
 //void CastAllRays(float playerX, float playerY, float playerAngle)
 //{
 //	float startAngle = playerAngle - FOV / 2.0f;
@@ -190,7 +187,6 @@ using namespace Craft;
 
 void Player::BeginPlay()
 {
-	screenHeight = Craft::Engine::Get().GetHeight();
 	distances.resize(viewWidth);
 }
 
@@ -250,17 +246,17 @@ void Player::Draw()
 			continue;
 		}
 
-		int wallHeight = (int)(screenHeight / distances[x]);
-		if (wallHeight > screenHeight)
+		int wallHeight = (int)(viewHeight / distances[x]);
+		if (wallHeight > viewHeight)
 		{
-			wallHeight = screenHeight;
+			wallHeight = viewHeight;
 		}
 
 		// 벽 그리기 -> 콘솔의 Y좌표는 반대임에 유의
-		int wallTop = (screenHeight / 2) - (wallHeight / 2);
-		int wallBottom = (screenHeight / 2) + (wallHeight / 2);
+		int wallTop = (viewHeight / 2) - (wallHeight / 2);
+		int wallBottom = (viewHeight / 2) + (wallHeight / 2);
 
-		for (int y = 0;y < screenHeight;++y) 
+		for (int y = 0;y < viewHeight;++y)
 		{
 			if (y >= wallTop && y <= wallBottom)
 			{
@@ -279,6 +275,3 @@ void Player::Draw()
 		}
 	}
 }
-
-
-

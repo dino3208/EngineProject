@@ -8,6 +8,7 @@ class Player:public Actor
 {
 public:
 	int viewWidth = 0;
+	int viewHeight = 0;
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float deltaTime) override;
@@ -18,8 +19,6 @@ public:
 	Map* map = nullptr;
 
 protected:
-	int screenHeight = 0;
-
 	// 캐릭터 좌표
 	float playerX = 9.0f;
 	float playerY = 1.0f;

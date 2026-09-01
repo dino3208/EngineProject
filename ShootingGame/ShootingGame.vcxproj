@@ -99,6 +99,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Actor\Map.cpp" />
     <ClCompile Include="UI\Panel.cpp" />
+    <ClCompile Include="UI\TextBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UI\Lantern.h" />
@@ -106,6 +107,7 @@
     <ClInclude Include="Actor\Map.h" />
     <ClInclude Include="Level\DungeonLevel.h" />
     <ClInclude Include="UI\Panel.h" />
+    <ClInclude Include="UI\TextBox.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
