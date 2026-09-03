@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Actor/Actor.h"
+#include <vector>
 #include <string>
 
 using namespace Craft;
@@ -8,6 +9,8 @@ class TextBox : public Actor
 {
 public:
 	virtual void Draw() override;
+
+	void ShowDoorPrompt(int selectedIndex);
 
 	// 텍스트 박스 그리기 위한 변수
 	int startY = 0;
@@ -19,6 +22,7 @@ public:
 	{
 		KeyPickUp,
 		DoorLocked,
+		DoorOpened,
 		Damaged
 	};
 
@@ -27,6 +31,6 @@ public:
 
 private:
 	// 현재 메세지를 저장할 멤버 변수
-	std::string currentMessage;
+	std::vector<std::string> currentLines;
 };
 

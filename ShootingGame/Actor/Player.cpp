@@ -5,13 +5,6 @@
 #include "Player.h"
 
 
-// 각도->라디안 변환 함수
-const float PI = 3.14159265f;
-float DegToRad(float degree)
-{
-	return degree * (PI / 180.0f);
-}
-
 // 시야각
 const float FOV = DegToRad(60.0f);
 
@@ -135,30 +128,27 @@ Craft::Color GetWallColor(float distance)
 	return Craft::Color::Red;
 }
 
-// 열쇠 메커니즘
-bool hasKey = false;
-
 // 아이템(열쇠) 줍기 시도 함수
-void TryPickUpItem(Map& map, float playerX, float playerY)
+void Player::TryPickUpItem()
 {
 	int x = (int)playerX;
 	int y = (int)playerY;
 
 	// 화면 밖으로 나가는 것 방지
-	if (y < 0 || y >= (int)map.mapData.size()) { return; }
-	if (x < 0 || x >= (int)map.mapData[y].length()) { return; }
+	if (y < 0 || y >= (int)map->mapData.size()) { return; }
+	if (x < 0 || x >= (int)map->mapData[y].length()) { return; }
 
 	// 열쇠인 K 획득시. 열쇠 보유로 전환 + K를 바닥으로 전환
-	if (map.mapData[y][x] == 'K')
+	if (map->mapData[y][x] == 'K')
 	{
 		hasKey = true;
-		map.mapData[y][x] = '.';
+		map->mapData[y][x] = '.';
 	}
 }
 
 
 // 문 열기 시도 함수
-void TryOpenDoor(Map& map, float playerX, float playerY, float playerAngle)
+void Player::TryOpenDoor()
 {
 	if (!hasKey)
 	{
@@ -168,13 +158,13 @@ void TryOpenDoor(Map& map, float playerX, float playerY, float playerAngle)
 	int frontY = (int)(playerY + sinf(playerAngle));
 
 	// 화면 밖으로 나가는 경우 방지
-	if (frontY < 0 || frontY >= (int)map.mapData.size()) { return; }
-	if (frontX < 0 || frontX >= (int)map.mapData[frontY].length()) { return; }
+	if (frontY < 0 || frontY >= (int)map->mapData.size()) { return; }
+	if (frontX < 0 || frontX >= (int)map->mapData[frontY].length()) { return; }
 
 	// 열쇠가 있을 경우 문인 D를 바닥인 .으로 변환
-	if (map.mapData[frontY][frontX] == 'D')
+	if (map->mapData[frontY][frontX] == 'D')
 	{
-		map.mapData[frontY][frontX] = '.';
+		map->mapData[frontY][frontX] = '.';
 	}
 }
 
@@ -194,7 +184,7 @@ void Player::Tick(float deltaTime)
 {
 	Actor::Tick(deltaTime);
 
-	const float rotSpeed = DegToRad(90.0f);
+	const float rotSpeed = Util::DegToRad(90.0f);
 	const float moveSpeed = 3.0f;
 
 	if (Input::Get().GetKey('A'))
@@ -228,8 +218,8 @@ void Player::Tick(float deltaTime)
 
 	if (Input::Get().GetKeyDown('E'))
 	{
-		TryPickUpItem(*map, playerX, playerY);
-		TryOpenDoor(*map, playerX, playerY, playerAngle);
+		TryPickUpItem();
+		TryOpenDoor();
 	}
 
 	CastAllRays(*map, playerX, playerY, playerAngle, viewWidth);

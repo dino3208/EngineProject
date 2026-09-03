@@ -1,14 +1,20 @@
 ﻿#pragma once
+#include <Util/Util.h>
 #include "Actor/Actor.h"
 #include "Actor/Map.h"
 #include "UI/TextBox.h"
 
 using namespace Craft;
+using namespace Util;
 class Player:public Actor
 {
 public:
 	int viewWidth = 0;
 	int viewHeight = 0;
+
+	void TryPickUpItem();
+	void TryOpenDoor();
+
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float deltaTime) override;
@@ -26,15 +32,8 @@ protected:
 	float playerX = 9.0f;
 	float playerY = 1.0f;
 
-	// 각도->라디안 변환 함수
-	const float PI = 3.14159265f;
-	float DegToRad(float degree)
-	{
-		return degree * (PI / 180.0f);
-	}
-
 	// 캐릭터 시야방향
-	float playerAngle = DegToRad(180.0f);
+	float playerAngle = Util::DegToRad(180.0f);
 
 	// 비트 기반
 	const float bpm = 120.0f;
@@ -43,5 +42,10 @@ protected:
 
 	// 열쇠 보유 유무
 	bool hasKey = false;
+
+	// 문 관련 변수
+	bool waitingForDoorConfirm = false;
+	int selectedDoorOption = 0;
+	Vector2 targetDoor; // 지금 보고 있는 문 구분
 };
 

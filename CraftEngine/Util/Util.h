@@ -41,4 +41,11 @@ namespace Util
 		// 난수 반환
 		return distribution(GetRandomEngine());
 	}
+
+	// 각도->라디안 변환
+	const float PI = 3.14159265f;
+	inline float DegToRad(float degree)
+	{
+		return degree * (PI / 180.0f);
+	}
 }
