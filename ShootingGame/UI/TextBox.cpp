@@ -26,31 +26,42 @@ void TextBox::Draw()
 	Renderer::Get().Submit(currentLines, Vector2(2, startY + 1), Color::White);
 }
 
-void TextBox::ShowDoorPrompt(int selectedIndex)
-{
-	currentLines =
-	{
-		"문을 여시겠습니까?",
-		selectedIndex == 0 ? "> 예" : " 예",
-		selectedIndex == 1 ? "> 아니오" : " 아니오"
-	};
-}
-
-// 어떤 메세지를 보여줄 지 정하는 함수
-void TextBox::ShowMessage(MessageType type, int value)
+// Getter
+std::string TextBox::GetMessageText(MessageType type, int value) const
 {
 	switch (type)
 	{
+	case MessageType::Yes:
+		return "예";
+
+	case MessageType::No:
+		return "아니오";
+	
 	case MessageType::KeyPickUp:
-		currentLines = { "열쇠를 획득했습니다." };
-		return; // void 함수이기 때문에 break;를 써도 동일한 효과
+		return "열쇠를 획득했습니다.";
+	case MessageType::DoorPrompt:
+		return "문을 열겠습니까?";
+	case MessageType::DoorOpened:
+		return "문이 열렸습니다.";
 	case MessageType::DoorLocked:
-		currentLines = { "문이 잠겨있습니다." };
-		return;
+		return "문이 잠겨있습니다.";
+
 	case MessageType::Damaged:
-		currentLines = { "피해를 " + std::to_string(value) + "을(를) 입었습니다." };
-		return;
+		return "피해를 " + std::to_string(value) + "을(를) 입었습니다.";
 	}
+	return ""; // 안전망
+}
+
+// 정해진 메세지 종류 중 하나를 보여준다. (고정문구)
+void TextBox::ShowMessage(MessageType type, int value)
+{
+	currentLines = { GetMessageText(type, value) };
+}
+
+// 이미 만들어진 줄들을 그대로 보여준다. (상황에 따라 조합해서 만든 내용)
+void TextBox::ShowLines(const std::vector<std::string>& lines)
+{
+	currentLines = lines;
 }
 
 

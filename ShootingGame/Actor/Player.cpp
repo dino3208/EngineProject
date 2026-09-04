@@ -42,18 +42,6 @@ float CastRay(const Map& map, float startX, float startY, float angle)
 	return maxDistance;
 }
 
-//void CastAllRays(float playerX, float playerY, float playerAngle)
-//{
-//	float startAngle = playerAngle - FOV / 2.0f;
-//	float angleStep = FOV / screenWidth;
-//
-//	for (int i = 0; i < screenWidth; ++i)
-//	{
-//		float rayAngle = startAngle + angleStep * i;
-//		distances[i] = CastRay(playerX, playerY, rayAngle);
-//	}
-//}
-
 // 광선 여러개 쏘는 함수
 void CastAllRays(const Map& map, float playerX, float playerY, float playerAngle, int viewWidth)
 {
@@ -150,10 +138,7 @@ void Player::TryPickUpItem()
 // 문 열기 시도 함수
 void Player::TryOpenDoor()
 {
-	if (!hasKey)
-	{
-		return;
-	}
+	if()
 	int frontX = (int)(playerX + cosf(playerAngle));
 	int frontY = (int)(playerY + sinf(playerAngle));
 
