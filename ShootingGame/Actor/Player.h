@@ -43,10 +43,5 @@ protected:
 
 	// 열쇠 보유 유무
 	bool hasKey = false;
-
-	// 문 관련 변수
-	bool waitingForDoorConfirm = false;
-	SelectMenu doorMenu; 
-	Vector2 targetDoor; // 지금 보고 있는 문 구분
 };
 

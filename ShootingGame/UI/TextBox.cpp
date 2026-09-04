@@ -26,33 +26,6 @@ void TextBox::Draw()
 	Renderer::Get().Submit(currentLines, Vector2(2, startY + 1), Color::White);
 }
 
-// Getter
-std::string TextBox::GetMessageText(MessageType type, int value) const
-{
-	switch (type)
-	{
-	case MessageType::Yes:
-		return "예";
-
-	case MessageType::No:
-		return "아니오";
-	
-	case MessageType::KeyPickUp:
-		return "열쇠를 획득했습니다.";
-	case MessageType::DoorPrompt:
-		return "문을 열겠습니까?";
-
-	case MessageType::DoorOpened:
-		return "문이 열렸습니다.";
-	case MessageType::DoorLocked:
-		return "문이 잠겨있습니다.";
-
-	case MessageType::Damaged:
-		return "피해를 " + std::to_string(value) + "을(를) 입었습니다.";
-	}
-	return ""; // 안전망
-}
-
 std::vector<std::string> TextBox::GetMessageArt(MessageType type, int value) const
 {
 	switch (type)
@@ -88,38 +61,6 @@ std::vector<std::string> TextBox::GetMessageArt(MessageType type, int value) con
 			"#        #  #       #  #   #       #     #    #     # #             #    #     # #          #  #   #          #    ",
 			"#        #  #     # #   #  #       #     #    #     # #             #    #     # #          #   #  #          #    ",
 			"#       ###  #####  #    # ####### ######      #####  #             #    #     # #######    #    # #######    #    "
-		}
-			;
-	case MessageType::DoorPrompt:
-		return{
-			"#     #    #    #     # #######    ####### #######    ####### ######  ####### #     #    ####### #     # #######    ######  ####### ####### ######   #####  ",
-			"#  #  #   # #   ##    #    #          #    #     #    #     # #     # #       ##    #       #    #     # #          #     # #     # #     # #     # #     # ",
-			"#  #  #  #   #  # #   #    #          #    #     #    #     # #     # #       # #   #       #    #     # #          #     # #     # #     # #     #       # ",
-			"#  #  # #     # #  #  #    #          #    #     #    #     # ######  #####   #  #  #       #    ####### #####      #     # #     # #     # ######     ###  ",
-			"#  #  # ####### #   # #    #          #    #     #    #     # #       #       #   # #       #    #     # #          #     # #     # #     # #   #      #    ",
-			"#  #  # #     # #    ##    #          #    #     #    #     # #       #       #    ##       #    #     # #          #     # #     # #     # #    #          ",
-			 "## ##  #     # #     #    #          #    #######    ####### #       ####### #     #       #    #     # #######    ######  ####### ####### #     #    #    "
-		};
-
-	case MessageType::DoorOpened:
-		return{
-			"######  ####### ####### ######     ####### ######  ####### #     # ####### ######  ",
-			"#     # #     # #     # #     #    #     # #     # #       ##    # #       #     # ",
-			"#     # #     # #     # #     #    #     # #     # #       # #   # #       #     # ",
-			"#     # #     # #     # ######     #     # ######  #####   #  #  # #####   #     # ",
-			"#     # #     # #     # #   #      #     # #       #       #   # # #       #     # ",
-			"#     # #     # #     # #    #     #     # #       #       #    ## #       #     # ",
-			"######  ####### ####### #     #    ####### #       ####### #     # ####### ######  "
-		};
-	case MessageType::DoorLocked:
-		return{
-			"######  ####### ####### ######     #       #######  #####  #    # ####### ######  ",
-			"#     # #     # #     # #     #    #       #     # #     # #   #  #       #     # ",
-			"#     # #     # #     # #     #    #       #     # #       #  #   #       #     # ",
-			"#     # #     # #     # ######     #       #     # #       ###    #####   #     # ",
-			"#     # #     # #     # #   #      #       #     # #       #  #   #       #     # ",
-			"#     # #     # #     # #    #     #       #     # #     # #   #  #       #     # ",
-			"######  ####### ####### #     #    ####### #######  #####  #    # ####### ######  "
 		};
 
 	case MessageType::Damaged:
@@ -167,12 +108,6 @@ std::vector<std::string> TextBox::GetMessageArt(MessageType type, int value) con
 		break;
 	}
 	return {};
-}
-
-// 정해진 메세지 종류 중 하나를 보여준다. (고정문구)
-void TextBox::ShowMessage(MessageType type, int value)
-{
-	currentLines = { GetMessageText(type, value) };
 }
 
 // 이미 만들어진 줄들을 그대로 보여준다. (상황에 따라 조합해서 만든 내용)

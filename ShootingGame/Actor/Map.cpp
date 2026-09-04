@@ -36,5 +36,5 @@ bool Map::IsWall(int x, int y) const
 	}
 
 	// 벽이거나 문이면 true, 아니면 false를 반환
-	return mapData[y][x] == '#' || mapData[y][x] == 'D';
+	return mapData[y][x] == '#';
 }

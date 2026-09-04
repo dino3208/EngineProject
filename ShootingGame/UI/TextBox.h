@@ -19,9 +19,6 @@ public:
 		Yes,
 		No,
 		KeyPickUp,
-		DoorPrompt,
-		DoorLocked,
-		DoorOpened,
 		Damaged
 	};
 
@@ -29,12 +26,7 @@ public:
 
 	void ShowLines(const std::vector<std::string>& lines);
 
-	std::string GetMessageText(MessageType type, int value = 0) const;
-
 	std::vector<std::string> GetMessageArt(MessageType type, int value = 0) const;
-
-	// 메세지를 출력할 함수
-	void ShowMessage(MessageType type, int value = 0);
 
 private:
 	// 현재 메세지를 저장할 멤버 변수
