@@ -3,6 +3,7 @@
 #include "Actor/Actor.h"
 #include "Actor/Map.h"
 #include "UI/TextBox.h"
+#include "UI/SelectMenu.h"
 
 using namespace Craft;
 using namespace Util;
@@ -45,7 +46,7 @@ protected:
 
 	// 문 관련 변수
 	bool waitingForDoorConfirm = false;
-	int selectedDoorOption = 0;
+	SelectMenu doorMenu; 
 	Vector2 targetDoor; // 지금 보고 있는 문 구분
 };
 

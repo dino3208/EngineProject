@@ -3,6 +3,7 @@
 #include <Engine/Engine.h>
 
 #include "Player.h"
+#include "UI/TextBox.h"
 
 
 // 시야각
@@ -60,7 +61,6 @@ void CastAllRays(const Map& map, float playerX, float playerY, float playerAngle
 
 // Todo: 음영표현
 // █░▒▓
-
 //if (distance < 1.0f)
 //{
 //	return (char)219;
@@ -126,11 +126,13 @@ void Player::TryPickUpItem()
 	if (y < 0 || y >= (int)map->mapData.size()) { return; }
 	if (x < 0 || x >= (int)map->mapData[y].length()) { return; }
 
+
 	// 열쇠인 K 획득시. 열쇠 보유로 전환 + K를 바닥으로 전환
 	if (map->mapData[y][x] == 'K')
 	{
 		hasKey = true;
 		map->mapData[y][x] = '.';
+		textBox->ShowLines(textBox->GetMessageArt(TextBox::MessageType::KeyPickUp));
 	}
 }
 
@@ -138,18 +140,19 @@ void Player::TryPickUpItem()
 // 문 열기 시도 함수
 void Player::TryOpenDoor()
 {
-	if()
-	int frontX = (int)(playerX + cosf(playerAngle));
-	int frontY = (int)(playerY + sinf(playerAngle));
+	int frontX = roundf(playerX + cosf(playerAngle));
+	int frontY = roundf(playerY + sinf(playerAngle));
 
 	// 화면 밖으로 나가는 경우 방지
 	if (frontY < 0 || frontY >= (int)map->mapData.size()) { return; }
 	if (frontX < 0 || frontX >= (int)map->mapData[frontY].length()) { return; }
 
-	// 열쇠가 있을 경우 문인 D를 바닥인 .으로 변환
 	if (map->mapData[frontY][frontX] == 'D')
 	{
-		map->mapData[frontY][frontX] = '.';
+		textBox->ShowLines(
+			doorMenu.GetCurrentLines(textBox->GetMessageArt(TextBox::MessageType::DoorPrompt)));
+		targetDoor = Vector2(frontX, frontY);
+		waitingForDoorConfirm = true;
 	}
 }
 
@@ -163,51 +166,84 @@ using namespace Craft;
 void Player::BeginPlay()
 {
 	distances.resize(viewWidth);
+	doorMenu.SetOptions(
+		{ textBox->GetMessageArt(TextBox::MessageType::Yes),
+		textBox->GetMessageArt(TextBox::MessageType::No) });
 }
 
 void Player::Tick(float deltaTime)
 {
 	Actor::Tick(deltaTime);
-
-	const float rotSpeed = Util::DegToRad(90.0f);
-	const float moveSpeed = 3.0f;
-
-	if (Input::Get().GetKey('A'))
+	if (waitingForDoorConfirm)
 	{
-		playerAngle -= rotSpeed * deltaTime;
+		if (Input::Get().GetKeyDown('W') || Input::Get().GetKeyDown('S'))
+		{
+			doorMenu.MoveNext();
+			textBox->ShowLines(doorMenu.GetCurrentLines(textBox->GetMessageArt(TextBox::MessageType::DoorPrompt)));
+		}
+		if (Input::Get().GetKeyDown('E'))
+		{
+			if (doorMenu.GetSelectedIndex() == 0)
+			{
+				if (hasKey)
+				{
+					map->mapData[targetDoor.y][targetDoor.x] = '.';
+					textBox->ShowLines(textBox->GetMessageArt(TextBox::MessageType::DoorOpened));
+				}
+				else
+				{
+					textBox->ShowLines(textBox->GetMessageArt(TextBox::MessageType::DoorLocked));
+				}
+			}
+			else
+			{
+				textBox->ShowLines({});
+			}
+			waitingForDoorConfirm = false;
+		}
 	}
-	if (Input::Get().GetKey('D'))
+	else
 	{
-		playerAngle += rotSpeed * deltaTime;
+		const float rotSpeed = Util::DegToRad(90.0f);
+		const float moveSpeed = 3.0f;
+
+		if (Input::Get().GetKey('A'))
+		{
+			playerAngle -= rotSpeed * deltaTime;
+		}
+		if (Input::Get().GetKey('D'))
+		{
+			playerAngle += rotSpeed * deltaTime;
+		}
+
+		float moveX = 0.0f;
+		float moveY = 0.0f;
+
+		if (Input::Get().GetKey('W'))
+		{
+			moveX = cosf(playerAngle) * moveSpeed * deltaTime;
+			moveY = sinf(playerAngle) * moveSpeed * deltaTime;
+		}
+		if (Input::Get().GetKey('S'))
+		{
+			moveX = -cosf(playerAngle) * moveSpeed * deltaTime;
+			moveY = -sinf(playerAngle) * moveSpeed * deltaTime;
+		}
+
+		float nextX = playerX + moveX;
+		float nextY = playerY + moveY;
+
+		if (!map->IsWall((int)nextX, (int)playerY)) { playerX = nextX; }
+		if (!map->IsWall((int)playerX, (int)nextY)) { playerY = nextY; }
+
+		if (Input::Get().GetKeyDown('E'))
+		{
+			TryPickUpItem();
+			TryOpenDoor();
+		}
+
+		CastAllRays(*map, playerX, playerY, playerAngle, viewWidth);
 	}
-
-	float moveX = 0.0f;
-	float moveY = 0.0f;
-
-	if (Input::Get().GetKey('W'))
-	{
-		moveX = cosf(playerAngle) * moveSpeed * deltaTime;
-		moveY = sinf(playerAngle) * moveSpeed * deltaTime;
-	}
-	if (Input::Get().GetKey('S'))
-	{
-		moveX = -cosf(playerAngle) * moveSpeed * deltaTime;
-		moveY = -sinf(playerAngle) * moveSpeed * deltaTime;
-	}
-
-	float nextX = playerX + moveX;
-	float nextY = playerY + moveY;
-
-	if (!map->IsWall((int)nextX, (int)playerY)) {playerX = nextX;}
-	if (!map->IsWall((int)playerX, (int)nextY)) {playerY = nextY;}
-
-	if (Input::Get().GetKeyDown('E'))
-	{
-		TryPickUpItem();
-		TryOpenDoor();
-	}
-
-	CastAllRays(*map, playerX, playerY, playerAngle, viewWidth);
 }
 
 void Player::Draw()

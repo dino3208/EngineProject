@@ -14,7 +14,7 @@ void DungeonLevel::OnInitialized()
 	map.mapData =
 	{
 		"###########",
-		"#.........#",
+		"#..D.K..D.#",
 		"#.#######.#",
 		"#.#.....#.#",
 		"#.#.###.#.#",
@@ -46,8 +46,12 @@ void DungeonLevel::OnInitialized()
 	panel->panelWidth = uiPanelWidth;
 	panel->panelHeight = viewHeight;
 
+	// UI에 랜턴 배치
+	std::shared_ptr<Lantern> lantern = SpawnActor<Lantern>();
+	lantern->SetPosition(Vector2(viewWidth + 1, viewHeight - 11));
+	std::shared_ptr<Lantern> lantern2 = SpawnActor<Lantern>();
+	lantern2->SetPosition(Vector2(viewWidth + 135, viewHeight - 11));
 
-	SpawnActor<Lantern>();
 
 	// 하단 메세지 출력용 텍스트박스 생성 + 크기/위치 설정
 	std::shared_ptr<TextBox> textBox = SpawnActor<TextBox>();

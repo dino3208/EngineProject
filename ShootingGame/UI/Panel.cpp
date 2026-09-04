@@ -9,7 +9,7 @@ void Panel::Draw()
 	{
 		// 위/아래 테두리
 		Renderer::Get().Submit("-", Vector2(startX + x, 0), Color::White);
-		Renderer::Get().Submit("-", Vector2(startX + x, panelHeight - 1), Color::White);
+		//Renderer::Get().Submit("-", Vector2(startX + x, panelHeight - 1), Color::White);
 	}
 	// 좌/우 테두리
 	for (int y = 0;y < panelHeight;++y)

@@ -31,6 +31,8 @@ public:
 
 	std::string GetMessageText(MessageType type, int value = 0) const;
 
+	std::vector<std::string> GetMessageArt(MessageType type, int value = 0) const;
+
 	// 메세지를 출력할 함수
 	void ShowMessage(MessageType type, int value = 0);
 

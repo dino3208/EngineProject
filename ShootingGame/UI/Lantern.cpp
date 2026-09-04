@@ -6,7 +6,6 @@
 
 void Lantern::BeginPlay()
 {
-	screenHeight = Craft::Engine::Get().GetHeight();
 }
 
 void Lantern::Tick(float deltaTime)
@@ -72,7 +71,7 @@ void Lantern::Draw()
 			"        `-'        "
 		}
 		};
-		Renderer::Get().Submit(lanternFrames[lanternFrame], Vector2(2, screenHeight - 10), Craft::Color::Yellow);
+		Renderer::Get().Submit(lanternFrames[lanternFrame], GetPosition(), Craft::Color::Yellow);
 }
 
 

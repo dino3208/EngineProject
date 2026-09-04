@@ -1,7 +1,7 @@
 ﻿#include "SelectMenu.h"
 
 // 선택지 목록
-void SelectMenu::SetOptions(const std::vector<std::string>& options)
+void SelectMenu::SetOptions(const std::vector<std::vector<std::string>>& options)
 {
     // this->를 써야 헤더의 private에 있는 options로 인식
     this->options = options;
@@ -21,15 +21,35 @@ size_t SelectMenu::GetSelectedIndex() const
 }
 
 // 현재 선택 예상 선택지 표시
-std::vector<std::string> SelectMenu::GetCurrentLines(const std::string& currentline) const
+std::vector<std::string> SelectMenu::GetCurrentLines(const std::vector<std::string>& currentline) const
 {
-    std::vector<std::string> lines = {currentline};
+    static const std::vector<std::string> cursorArt =
+    {
+"        #    ",
+"         #   ",
+"          #  ",
+"           # ",
+"          #  ",
+"         #   ",
+"        #    "
+    };
+
+    std::vector<std::string> lines = currentline;
     for (int i = 0; i < static_cast<int>(options.size()); ++i)
     {
-        // 선택한 인덱스와 일치시 마커 출력
-        std::string marker = (i == static_cast<int>(selectedIndex)) ? "> " : " ";
-        // 문자열에 마커 + 선택지 뒤에 붙여서 출력
-        lines.push_back(marker + options[i]); // 문자열의 size()는 세로줄의 갯수. 줄바꿈이 알아서 있다. 한 원소 = 한 줄
+        for (int row = 0; row < static_cast<int>(options[i].size()); ++row)
+        {
+            std::string prefix;
+            if (selectedIndex == i)
+            {
+                prefix = cursorArt[row];
+            }
+            else
+            {
+                prefix = std::string(cursorArt[row].length(), ' ');
+            }
+            lines.push_back(prefix + options[i][row]);
+        }
     }
     return lines;
 }

@@ -6,14 +6,14 @@
 class SelectMenu
 {
 public:
-	void SetOptions(const std::vector <std::string>& options);
+	void SetOptions(const std::vector<std::vector<std::string>>& options);
 	void MoveNext();
 	size_t GetSelectedIndex() const;
-	std::vector<std::string> GetCurrentLines(const std::string& currentline) const;
+	std::vector<std::string> GetCurrentLines(const std::vector<std::string>& currentline) const;
 
 private:
 	// 선택지
-	std::vector<std::string> options;
+	std::vector<std::vector<std::string>> options;
 	// 선택된 선택지
 	size_t selectedIndex = 0;
 };

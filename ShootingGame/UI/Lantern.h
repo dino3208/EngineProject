@@ -14,8 +14,6 @@ public:
 	
 
 protected:
-	int screenHeight = 0;
-
 	int lanternFrame = 0;
 	float lanternFrameTimer = 0.0f;
 	const float lanternFrameDuration = 0.15f;
