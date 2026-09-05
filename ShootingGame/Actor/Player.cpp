@@ -190,6 +190,8 @@ void Player::Tick(float deltaTime)
 		TryPickUpItem();
 	}
 
+	SetPosition(Vector2(static_cast<int>(playerX), static_cast<int>(playerY)));
+
 	CastAllRays(*map, playerX, playerY, playerAngle, viewWidth);
 }
 

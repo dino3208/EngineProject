@@ -33,6 +33,9 @@ void DungeonLevel::OnInitialized()
 	// 텍스트박스 높이
 	int textBoxHeight = 28;
 
+	// 플레이어 초기 위치 탐색
+	for()
+
 	// 플레이어 시야 담당 액터 생성 + 크기 설정
 	std::shared_ptr<Player> player = SpawnActor<Player>();
 	// 플레이어한테 레벨이 가진 맵의 주소 저장 명령
