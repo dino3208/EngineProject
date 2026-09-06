@@ -27,14 +27,11 @@ void DungeonLevel::OnInitialized()
 	// 시야 박스 크기
 	int viewWidth = 313;
 	int viewHeight = 106;
-	
+
 	// UI패널 너비
 	int uiPanelWidth = 156;
 	// 텍스트박스 높이
 	int textBoxHeight = 28;
-
-	// 플레이어 초기 위치 탐색
-	for()
 
 	// 플레이어 시야 담당 액터 생성 + 크기 설정
 	std::shared_ptr<Player> player = SpawnActor<Player>();
@@ -42,6 +39,7 @@ void DungeonLevel::OnInitialized()
 	player->map = &map; 
 	player->viewWidth = viewWidth;
 	player->viewHeight = viewHeight;
+	player->SetSpawnPosition(9.0f, 1.0f);
 
 	// UI 패널 액터 생성 + 크기/위치 설정
 	std::shared_ptr<Panel> panel = SpawnActor<Panel>();

@@ -10,6 +10,11 @@ using namespace Util;
 class Player:public Actor
 {
 public:
+	Player();
+	~Player();
+
+	void SetSpawnPosition(float x, float y);
+
 	int viewWidth = 0;
 	int viewHeight = 0;
 

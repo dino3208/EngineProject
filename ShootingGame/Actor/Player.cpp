@@ -6,6 +6,22 @@
 #include "UI/TextBox.h"
 
 
+
+Player::Player()
+	:Actor("P", Vector2::Zero, Color::White)
+{
+}
+
+Player::~Player()
+{
+}
+
+void Player::SetSpawnPosition(float x, float y)
+{
+	playerX = x;
+	playerY = y;
+}
+
 // 시야각
 const float FOV = DegToRad(60.0f);
 
