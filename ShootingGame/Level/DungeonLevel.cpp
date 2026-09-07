@@ -1,8 +1,11 @@
 ﻿#include "DungeonLevel.h"
 #include "Actor/Player.h"
+#include "Actor/Monster.h"
 #include "UI/Panel.h"
 #include "UI/Lantern.h"
 #include "UI/TextBox.h"
+#include "UI/AStarVisualizer.h"
+#include "Ui/MiniMap.h"
 
 using namespace Craft;
 
@@ -12,16 +15,28 @@ void DungeonLevel::OnInitialized()
 
 	// 맵 데이터 Todo: 나중에 파일로 수정하는 형식으로 변환
 	map.mapData =
-	{
-		"###########",
-		"#.........#",
-		"#.#######.#",
-		"#.#.....#.#",
-		"#.#.###.#.#",
-		"#...#...#.#",
-		"#.#.#.###.#",
-		"#.#...#...#",
-		"###########"
+	{ 
+		"#########################",
+        "#.........#.............#",
+		"#.##.##.#.#.###.###.##..#",
+		"#.........#.......#...#.#",
+		"#.###.###...##..#.#.#.#.#",
+		"#...#...#.#.#.....#.#...#",
+		"###.###.#...#.###.#.###.#",
+		"#.......#.....#.........#",
+		"#.#.##..###.###.#####.#.#",
+		"#.#.....................#",
+		"#...#########.#.###.#####",
+		"#.#...........#.....#...#",
+		"#.#####.#.#.###.#.###.#.#",
+		"#.#...#...#.....#.....#.#",
+		"#.#...#.#.#.#.#.#.###.#.#",
+		"#.#.#.....#.....#.#...#.#",
+		"#.#.#..#####.#..#.#.#.#.#",
+		"#.#.#.#...#.......#.....#",
+		"#.#.#.#.#.#.#.#####.##..#",
+		"#.......#..............K#",
+		"#######################G#"
 	};
 
 	// 시야 박스 크기
@@ -39,7 +54,13 @@ void DungeonLevel::OnInitialized()
 	player->map = &map; 
 	player->viewWidth = viewWidth;
 	player->viewHeight = viewHeight;
-	player->SetSpawnPosition(9.0f, 1.0f);
+	player->SetSpawnPosition(1.0f, 10.0f);
+
+	// 몬스터 생성
+	std::shared_ptr<Monster> monster = SpawnActor<Monster>();
+	monster->map = &map;
+	monster->player = player.get();
+	monster->SetSpawnPosition(1.0f, 1.0f);
 
 	// UI 패널 액터 생성 + 크기/위치 설정
 	std::shared_ptr<Panel> panel = SpawnActor<Panel>();
@@ -60,5 +81,19 @@ void DungeonLevel::OnInitialized()
 	textBox->boxWidth = viewWidth + uiPanelWidth;
 	textBox->boxHeight = textBoxHeight;
 	player->textBox = textBox.get();
+
+	// 패널에 뜨는 미니맵.
+	std::shared_ptr<MiniMap> miniMap = SpawnActor<MiniMap>();
+	miniMap->map = &map;
+	miniMap->player = player.get();
+	miniMap->monster = monster.get();
+	miniMap->startX = panel->startX + 2;
+	miniMap->startY = 2;
+
+	// AStar 시각화를 위한 모드
+	std::shared_ptr<AStarVisualizer> visualizer = SpawnActor<AStarVisualizer>();
+	visualizer->map = &map;
+	visualizer->player = player.get();
+	visualizer->monster = monster.get();
 
 }

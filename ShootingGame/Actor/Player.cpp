@@ -1,10 +1,12 @@
 ﻿#include <Input/Input.h>
 #include <Render/Renderer.h>
 #include <Engine/Engine.h>
+#include <vector>
 
 #include "Player.h"
+#include "Actor/Monster.h"
 #include "UI/TextBox.h"
-
+#include "UI/ScreenArt.h"
 
 
 Player::Player()
@@ -152,6 +154,29 @@ void Player::TryPickUpItem()
 	}
 }
 
+void Player::TryExit()
+{
+	int frontX = roundf(playerX + cosf(playerAngle));
+	int frontY = roundf(playerY + sinf(playerAngle));
+
+	if (frontY < 0
+		|| frontY >= static_cast<int>(map->mapData.size()))
+	{
+		return;
+	}
+	if( frontX < 0
+		|| frontX >= static_cast<int>(map->mapData[frontY].length())) 
+	{
+		return;
+	}
+
+	if (map->mapData[frontY][frontX] == 'G' && hasKey)
+	{
+		hasWon = true;
+		winScreenTimer = 10.0f;
+	}
+}
+
 
 // 플레이어 랜턴
 const float lanternRadius = 1.0f;
@@ -159,6 +184,49 @@ const float lanternFalloff = 2.0f;
 //---------------------------------------------------------------------------------------//
 
 using namespace Craft;
+
+void Player::OnCollision(const std::shared_ptr<Actor>& other)
+{
+	std::shared_ptr<Monster> monster = Cast<Monster>(other);
+	{
+		if (!monster)
+		{
+			return;
+		}
+
+		if (invulnerableTimer > 0.0f)
+		{
+			return;
+		}
+
+		const int damageValues[4] = { 10,20,30,40 };
+		if (hitCount >= 4)
+		{
+			return;
+		}
+
+		int damage = damageValues[hitCount];
+		hitCount++;
+		totalDamage += damage;
+
+		// 두가지 메세지 출력을 위해 변수 만들어 lines에 넣기.
+		std::vector<std::string> lines = textBox->GetMessageArt(TextBox::MessageType::Damaged, damage);
+		std::vector<std::string> totalDamageArt = textBox->GetMessageArt(TextBox::MessageType::TotalDamage, totalDamage);
+		for (const std::string& line : totalDamageArt)
+		{
+			lines.emplace_back(line);
+		}
+		textBox->ShowLines(lines);
+		
+		invulnerableTimer = 1.0f;
+		monster->Stun(3.0f);
+
+		if (totalDamage >= 100)
+		{
+			QuitGame();
+		}
+	}
+}
 
 void Player::BeginPlay()
 {
@@ -168,6 +236,28 @@ void Player::BeginPlay()
 void Player::Tick(float deltaTime)
 {
 	Actor::Tick(deltaTime);
+
+	if (hasWon)
+	{
+		if (winScreenTimer > 0.0f)
+		{
+			winScreenTimer -= deltaTime;
+		}
+		for (int key = 0; key < 256; ++key)
+		{
+			if (Input::Get().GetKeyDown(key))
+			{
+				QuitGame();
+				break;
+			}
+		}
+		return;
+	}
+	// 무적시간 진행
+	if(invulnerableTimer> 0.0f)
+	{ 
+		invulnerableTimer -= deltaTime;
+	}
 
 	const float rotSpeed = Util::DegToRad(90.0f);
 	const float moveSpeed = 3.0f;
@@ -198,12 +288,15 @@ void Player::Tick(float deltaTime)
 	float nextX = playerX + moveX;
 	float nextY = playerY + moveY;
 
+	TryPickUpItem();
+
 	if (!map->IsWall((int)nextX, (int)playerY)) { playerX = nextX; }
 	if (!map->IsWall((int)playerX, (int)nextY)) { playerY = nextY; }
 
 	if (Input::Get().GetKeyDown('E'))
 	{
-		TryPickUpItem();
+		// 탈출 시도
+		TryExit();
 	}
 
 	SetPosition(Vector2(static_cast<int>(playerX), static_cast<int>(playerY)));
@@ -213,6 +306,18 @@ void Player::Tick(float deltaTime)
 
 void Player::Draw()
 {
+	if (hasWon)
+	{
+		ScreenArt screenArt;
+		std::vector<std::string> winArt = screenArt.GetArt(ScreenArt::ScreenType::Win);
+
+		int artWidth = static_cast<int>(winArt[0].length());
+		int artHeight = static_cast<int>(winArt.size());
+		int x = (viewWidth - artWidth) / 2;
+		int y = (viewHeight - artHeight) / 2;
+		Renderer::Get().Submit(winArt, Vector2(x, y), Color::White);
+		return;
+	}
 	// 거리에 따른 벽 위아래 그리기로 거리감 표현
 	for (int x = 0;x < viewWidth;++x)
 	{

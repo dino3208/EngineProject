@@ -19,8 +19,10 @@ public:
 	int viewHeight = 0;
 
 	void TryPickUpItem();
-	void TryOpenDoor();
+	void TryExit();
 
+	// 충돌 함수.
+	virtual void OnCollision(const std::shared_ptr<Actor>& other) override;
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float deltaTime) override;
@@ -41,6 +43,11 @@ protected:
 	// 캐릭터 시야방향
 	float playerAngle = Util::DegToRad(180.0f);
 
+	// 충돌 관련 변수.
+	int hitCount = 0; // 몇 번 충돌.
+	int totalDamage = 0; // 누적 데미지.
+	float invulnerableTimer = 0.0f; // 연속 히트 방지 쿨다운.
+
 	// 비트 기반
 	const float bpm = 120.0f;
 	const float secondsPerBeat = 60.0f / bpm;
@@ -48,5 +55,7 @@ protected:
 
 	// 열쇠 보유 유무
 	bool hasKey = false;
+	bool hasWon = false;
+	float winScreenTimer = 2.0f;
 };
 

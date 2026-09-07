@@ -93,21 +93,32 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Actor\Monster.cpp" />
+    <ClCompile Include="Algorithm\AStar.cpp" />
+    <ClCompile Include="UI\AStarVisualizer.cpp" />
     <ClCompile Include="UI\Lantern.cpp" />
     <ClCompile Include="Actor\Player.cpp" />
     <ClCompile Include="Level\DungeonLevel.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Actor\Map.cpp" />
+    <ClCompile Include="UI\MiniMap.cpp" />
     <ClCompile Include="UI\Panel.cpp" />
+    <ClCompile Include="UI\ScreenArt.cpp" />
     <ClCompile Include="UI\SelectMenu.cpp" />
     <ClCompile Include="UI\TextBox.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Actor\Monster.h" />
+    <ClInclude Include="Algorithm\AStar.h" />
+    <ClInclude Include="Algorithm\Node.h" />
+    <ClInclude Include="UI\AStarVisualizer.h" />
     <ClInclude Include="UI\Lantern.h" />
     <ClInclude Include="Actor\Player.h" />
     <ClInclude Include="Actor\Map.h" />
     <ClInclude Include="Level\DungeonLevel.h" />
+    <ClInclude Include="UI\MiniMap.h" />
     <ClInclude Include="UI\Panel.h" />
+    <ClInclude Include="UI\ScreenArt.h" />
     <ClInclude Include="UI\SelectMenu.h" />
     <ClInclude Include="UI\TextBox.h" />
   </ItemGroup>

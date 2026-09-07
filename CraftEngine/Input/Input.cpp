@@ -165,6 +165,7 @@ namespace Craft
 						const bool isKeyDown =
 							(mouseEvent.dwButtonState & button.buttonMask) != 0;
 						state.isKeyDown = isKeyDown;
+
 					}
 					break;
 				}

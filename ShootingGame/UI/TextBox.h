@@ -19,7 +19,8 @@ public:
 		Yes,
 		No,
 		KeyPickUp,
-		Damaged
+		Damaged,
+		TotalDamage,
 	};
 
 	virtual void Draw() override;
