@@ -110,7 +110,7 @@
 4. ~~`DungeonLevel.cpp`에 `Minimap` 스폰 + 위치 연결~~ — 완료. `panel->startX + 2`, `2`로 배치 (패널 테두리 안쪽)
 5. **빌드/실행 테스트 완료** — 미니맵이 패널에 항상 뜨고, 열쇠 위치가 노란색으로 보임, P 모드도 정상 동작.
 
-**이 과정에서 만난 엔진 버그 하나 고침**: `Map.h`에 `DrawGrid` 선언 위해 `#include <Math/Color.h>` 추가하면서 `Windows.h`가 `AStar.cpp`까지 전파됨 → `Windows.h`가 정의하는 `min`/`max` 매크로가 `AStar.cpp`의 `std::min`/`std::max` 호출(휴리스틱 계산, 오각선 거리)을 깨뜨림. `CraftEngine/Math/Color.h`의 `#include <Windows.h>` 앞에 `#define NOMINMAX` 추가해서 해결 (엔진 전체에 영향, 앞으로 이 문제 재발 안 함).
+**이 과정에서 만난 엔진 버그 하나 고침**: `Map.h`에 `DrawGrid` 선언 위해 `#include <Math/Color.h>` 추가하면서 `Windows.h`가 `AStar.cpp`까지 전파됨 → `Windows.h`가 정의하는 `min`/`max` 매크로가 `AStar.cpp`의 `std::min`/`std::max` 호출(휴리스틱 계산, 오각선 거리)을 깨뜨림. **`AStar.cpp` 맨 위에 `#define NOMINMAX` 추가해서 해결** (처음엔 `CraftEngine/Math/Color.h`에 넣어서 프로젝트 전체에 영구 적용하는 걸 제안했었으나, 실제로는 `AStar.cpp`에만 적용됨 — 이 파일 한정으로는 확실히 고쳐졌지만, 나중에 다른 `.cpp`가 `Windows.h`를 끌어들이면서 `std::min`/`std::max`를 쓰면 같은 문제가 재발할 수 있음. 재발하면 `Color.h`로 옮기는 걸 고려할 것.).
 
 ### 확대(zoom) 결국 추가함 (2026-09-07 새벽)
 
