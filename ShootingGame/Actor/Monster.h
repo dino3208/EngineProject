@@ -45,5 +45,8 @@ protected:
 	// 경로에서 몇번째 칸으로 가고 있는 지 세는 변수.
 	int pathIndex = 0;
 
+	// 거리감지용 변수.
+	bool isNearby = false;
+
 };
 

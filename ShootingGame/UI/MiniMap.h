@@ -24,5 +24,10 @@ public:
 
 	int cellSize = 4;
 
+	// 일정 주기로 몬스터만 표시되게 만드는 데 필요한 변수.
+	float blipTimer = 0.0f;
+	const float blipInterval = 3.0f;
+	const float blipVisibleDuration = 0.5f;
+
 };
 

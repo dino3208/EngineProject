@@ -1,4 +1,5 @@
-﻿#include "DungeonLevel.h"
+﻿#include <Engine/Engine.h>
+#include "DungeonLevel.h"
 #include "Actor/Player.h"
 #include "Actor/Monster.h"
 #include "UI/Panel.h"
@@ -12,7 +13,7 @@ using namespace Craft;
 void DungeonLevel::OnInitialized()
 {
 	Level::OnInitialized();
-
+	Engine::Get().PlayBackGroundMusic("GameLevel.wav");
 	// 맵 데이터 Todo: 나중에 파일로 수정하는 형식으로 변환
 	map.mapData =
 	{ 
@@ -21,7 +22,7 @@ void DungeonLevel::OnInitialized()
 		"#.##.##.#.#.###.###.##..#",
 		"#.........#.......#...#.#",
 		"#.###.###...##..#.#.#.#.#",
-		"#...#...#.#.#.....#.#...#",
+		"#...#...#.#.#.....#.#K..#",
 		"###.###.#...#.###.#.###.#",
 		"#.......#.....#.........#",
 		"#.#.##..###.###.#####.#.#",
@@ -35,7 +36,7 @@ void DungeonLevel::OnInitialized()
 		"#.#.#..#####.#..#.#.#.#.#",
 		"#.#.#.#...#.......#.....#",
 		"#.#.#.#.#.#.#.#####.##..#",
-		"#.......#..............K#",
+		"#.......#...............#",
 		"#######################G#"
 	};
 
@@ -81,14 +82,15 @@ void DungeonLevel::OnInitialized()
 	textBox->boxWidth = viewWidth + uiPanelWidth;
 	textBox->boxHeight = textBoxHeight;
 	player->textBox = textBox.get();
+	textBox->ShowLines(textBox->GetMessageArt(TextBox::MessageType::Key));
 
 	// 패널에 뜨는 미니맵.
 	std::shared_ptr<MiniMap> miniMap = SpawnActor<MiniMap>();
 	miniMap->map = &map;
 	miniMap->player = player.get();
 	miniMap->monster = monster.get();
-	miniMap->startX = panel->startX + 2;
-	miniMap->startY = 2;
+	miniMap->startX = panel->startX + 28;
+	miniMap->startY = 11;
 
 	// AStar 시각화를 위한 모드
 	std::shared_ptr<AStarVisualizer> visualizer = SpawnActor<AStarVisualizer>();

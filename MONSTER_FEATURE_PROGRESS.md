@@ -143,3 +143,54 @@
 
 - **몬스터 거리 기반 가변 속도**: 플레이어와 멀 땐 빠르게, 가까워지면 살짝 느리게 — 긴장감 부족 피드백(2026-09-07)에 대한 아이디어. 지금은 시각화 모드가 우선이라 보류.
 - ~~**미니맵 부재**~~ — **해결됨**, 위 참고.
+
+---
+
+## 2026-09-08 진행 상황 — 발표 전날, 마무리 작업
+
+**발표는 오늘(09-08)이 아니라 내일(09-09).** 어제 핵심 기능(추격/데미지/승리조건/미니맵/마우스 A* 시각화) 전부 완성 + 커밋(`83bcd0c`)/푸시 완료한 상태에서 이어감.
+
+- ~~**탈출 조건 간소화**~~ — **완료**. E키로 "바라보는 방향 앞" 체크하던 방식(`roundf(playerX + cosf(playerAngle))`)을 버리고, `TryPickUpItem()`처럼 **"내가 서 있는 칸이 G인지"**로 단순화. E키 조건도 없애고 `TryPickUpItem()`처럼 매 프레임 자동 호출로 변경 — 이제 열쇠를 가진 채 출구 칸을 밟기만 하면 바로 승리.
+  - **잡은 버그**: 범위체크 두 번째 줄(`x` 확인)에서 첫 번째 줄(`y` 확인)의 `map->mapData.size()`(세로 줄 개수, 21)를 그대로 복사해다 써서, `x`(가로 위치, 최대 24)를 21이랑 비교해버림 → 출구(`x=23`)가 "범위 밖"으로 잘못 판정되어 `return`, `G` 체크 자체를 못 감. `map->mapData[y].length()`(그 줄의 가로 길이, 25)로 고쳐서 해결.
+- 발표 준비 방식 확정: 시연 순서 따로 안 짜고, **구동 영상 녹화 → 장면 컷 편집 → GIF 변환 → PPT에 삽입**으로 진행 예정.
+- ~~**칸별 벽 색 구분**~~ — 계획 변경 후 **완료**: 원래 벽/바닥 전체를 색 구분하려던 계획 대신, **테두리 4방향(위=빨강, 아래=노랑, 왼쪽=초록, 오른쪽=파랑)만 별도 색**으로 칠하는 걸로 축소. `Map::DrawCell`을 재사용해서 미니맵에 테두리 4줄 덧그림.
+  - **3D 플레이어 시야에도 반영**: `CastRay()`가 거리뿐 아니라 **부딪힌 칸의 좌표(`hitX`/`hitY`, 참조 매개변수로 출력)**까지 알려주게 확장 → `CastAllRays()`가 `wallHitX`/`wallHitY` 배열(`distances`와 같은 방식)에 저장 → `Player::Draw()`에서 새 함수 `TryGetBorderColor(map, hitX, hitY, outColor)`(불리언 반환 + 참조 출력 패턴, 테두리면 방향색 채우고 true, 아니면 false)로 분기해서 테두리면 방향색, 아니면 기존 거리 기반 색(`GetWallColor`) 사용.
+  - **`Lantern` 시야 제한 로직 제거**: 랜턴 반경 넘으면 안 그리던 `lanternRadius`/`lanternFalloff` 관련 코드 전부 삭제 (UI 장식용 `Lantern` 액터 자체는 유지) — 시야가 너무 좁다는 피드백으로 제거, `GetWallChar`가 이미 자체적으로 먼 거리를 공백 처리해줘서 문제없음.
+  - **미해결 이상 현상 (버그 여부 미확정)**: 스폰 지점(왼쪽 테두리 바로 옆)에서 특정 각도로 볼 때, 직관적으로 예상한 색(예: 파랑)이 아니라 다른 테두리색(빨강)이 보이는 경우 발견. 가설: 미로 통로가 그 방향으로 쭉 이어지다가 실제로는 다른 쪽 테두리 모서리에 닿아서 그런 것(미로라서 대칭이 안 맞을 수 있음) — 그러나 `TryGetBorderColor`가 모서리 칸에서 상하 검사를 좌우보다 먼저 하는 순서상 우선순위 문제일 가능성도 배제 못함. 디버그 출력으로 정확한 `hitX`/`hitY` 값 확인하려다 시간 관계상 보류, 발표에 큰 지장 없다고 판단.
+- ~~**몬스터 거리 기반 가변 속도**~~ — **완료**. `Monster.cpp`에 `GetMoveInterval(distance)` 함수 추가 (멀면 0.15초, 보통 0.3초, 가까우면 0.5초 간격 — 최종적으로 사용자가 각각 0.1/2.0/2.0으로 재조정). 두 가지 버그를 거쳐 완성:
+  - 처음엔 `distance`만 계산해두고 실제로 `if (moveTimer >= moveInterval)`(옛날 고정 상수)를 그대로 써서 아무 효과가 없었음 → `GetMoveInterval(distance)` 호출로 교체.
+  - 그다음엔 `if (moveTimer >= GetMoveInterval(distance));`처럼 조건문 뒤에 세미콜론이 잘못 붙어서 그 아래 `{ }` 블록이 조건과 무관하게 매 프레임 무조건 실행되던 버그 → 세미콜론 제거로 해결. (`if(조건);`은 컴파일 에러 없이 조용히 논리를 깨버리는 클래식 실수라 요주의.)
+- ~~**미니맵 몬스터 일정 간격만 표시**~~ — **완료**. `MiniMap`에 `blipTimer`/`blipInterval`(3초)/`blipVisibleDuration`(0.5초) 추가, 매 프레임 `blipTimer`를 증가시키다 주기 넘으면 리셋, `blipTimer < blipVisibleDuration`일 때만 M 마커 그림 — 레이더 신호처럼 깜빡이는 효과.
+- ~~**메인화면**~~ — **완료**. 새 `Level` 서브클래스 `MainMenu`(`ShootingGame/Level/MainMenu.h`/`.cpp`) 신설 — `Tick()`에서 아무 키나(256개 키 코드 반복 확인, 승리화면 패턴 재사용) 감지되면 `Engine::Get().AddNewLevel<DungeonLevel>()`로 전환, `Draw()`에서 `ScreenArt::ScreenType::MainScreen` 그림. `Main.cpp`가 `DungeonLevel` 대신 `MainMenu`로 시작하게 변경.
+  - 제목 아트: 처음엔 유니코드 박스/블록 문자(`█`, `═`, FIGlet "ANSI Shadow" 등) 시도했으나 전부 멀티바이트라 콘솔에서 못 씀 → Claude가 순수 아스키 5x7 블록체로 "DUNGEON" 직접 생성(스크립트로 폭 검증, 41칸 통일 확인) → 이후 사용자가 직접 다른 변환 도구로 13줄/136칸짜리 더 정교한 아트로 교체, `file` 명령으로 순수 ASCII 확인 완료. 화면 전체(469x134, `Config/Setting.txt` 기준) 중앙 좌표 계산: `x=(469-136)/2=166`, `y=(134-13)/2=60`.
+  - **잡은 버그(중요)**: `MainMenu::Draw()`에 `Level:;Draw();`라고 오타 — `::`가 아니라 `:;`. 이번엔 컴파일 에러가 안 나고 **스택 오버플로우 크래시**로 이어짐: `Level:`이 goto 레이블로 파싱되고 `Draw();`가 대상 없이 호출되면서 `virtual` 함수라 자기 자신(`MainMenu::Draw()`)을 무한 재귀 호출 → 스택 소진. `Level::Draw();`로 수정해서 해결. (`:;`/`::` 오타가 이 세션 내내 반복됐는데, 이번처럼 "조용히 다른 의미로 컴파일되어 런타임에 크래시"하는 경우도 있다는 걸 기억해둘 것.)
+- ~~**승리화면 → 메인화면 복귀**~~ — **완료**. `Player::Tick()`의 `hasWon` 블록에서 `QuitGame()` 대신 `Engine::Get().AddNewLevel<MainMenu>();`로 교체.
+- ~~**게임오버 화면**~~ — **완료**. 승리화면(`hasWon`)과 동일한 구조로 `hasLost`/`lossScreenTimer` 플래그 추가 — `OnCollision()`에서 `totalDamage >= 100`이면 플래그만 세우고, 실제 "대기 + 아무 키나 감지 + 메인화면 복귀"는 `Tick()`에서 매 프레임 처리 (`hasWon`과 거의 동일 코드). 처음엔 `OnCollision()` 안에서 직접 아무 키나 검사하려다 실패 — `OnCollision()`은 충돌 난 그 한 프레임에만 호출되니까 매 프레임 도는 `Tick()`과 달리 "대기"가 안 됨, 승리화면 때와 똑같은 종류의 타이밍 실수.
+
+### 사운드 시스템 추가 (2026-09-08, 별도 인강 진도 병행)
+
+`CraftEngine`에 XAudio2 기반 `Sound` 클래스(싱글톤, 별도 `SoundSystem` 프로젝트에서 `.lib`/`.dll`로 미리 빌드됨) 연동. `Engine`이 `PlayOneShot`/`PlayBackGroundMusic`/`StopBackGroundMusic` 래퍼 함수로 감쌈.
+
+**연동 과정에서 잡은 버그들 (전부 오타/설정 실수, 로직 자체는 인강 그대로)**:
+- `Includes/`, `Library/` 폴더 안에 `SoundSystem` 폴더명이 `SoundSytem`(s 하나 빠짐)으로 오타 + 폴더가 한 번 더 중첩(`SoundSystem/SoundSystem/`) — 프로젝트 설정의 include/lib 디렉토리 철자랑 실제 폴더명이 어긋나서 `LNK1104`(라이브러리 못 엶) 및 헤더 못 찾는 에러 발생. 실제 폴더 정리 + `AdditionalLibraryDirectories` 오타 수정으로 해결.
+- `ShootingGame.vcxproj`의 사전 빌드 이벤트에서 `$(OutDir)`를 `&(OutDir)`로 오타(달러 기호 대신 앰퍼샌드) → MSBuild 매크로로 인식 안 돼서 `xcopy`가 엉뚱한 경로로 복사 시도, `MSB3073`(코드 255) 에러. `$`로 수정.
+- `SoundSystem.dll`이 `.lib`만으로는 실행 시점에 자동으로 안 따라옴 — `CraftEngine`의 빌드 후 이벤트에 `xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir) /y` 추가해서 실행 파일 폴더로 복사되게 함.
+- `Engine::PlayOneShot()`의 `std::string("..\Assets\Sound")` — 문자열 리터럴 안 백슬래시가 이스케이프 시퀀스(`\A`, `\S`)로 오인식되어 경로가 깨짐 → 슬래시(`/`)로 교체(`"../Assets/Sound/"`), 폴더-파일명 사이 구분자 누락도 같이 발견해서 수정.
+- `Sound::LoadSoundEffect()`가 파일을 못 열어도 조용히 `return`(에러 메세지 없음)이라 원인 파악이 어려웠음 — `Engine::PlayOneShot()`에 임시로 `std::ifstream`으로 파일 열기 성공 여부를 화면에 찍어보는 디버그 코드를 넣어서 확인, 문제 확정 후 제거.
+- `PlayOneShot("Roar")`처럼 확장자 없이 호출 — `Sound`는 자동으로 `.wav`를 안 붙여줘서 파일을 못 찾음. 호출부에서 `"Roar.wav"`/`"Damage.wav"`처럼 확장자까지 명시하는 걸로 해결.
+
+**최종 적용된 사운드**:
+- `Player::OnCollision()` 데미지 판정 시 `Damage.wav` 재생
+- `Monster::Tick()`에서 플레이어와의 거리가 일정 범위(최종 3.0f) 이내로 들어온 **최초 순간에만** `Roar.wav` 재생 + 배경음악 정지(`isNearby` 플래그로 가장자리 감지 — 몬스터는 계속 추적하므로 한 번 가까워지면 다시 멀어지지 않는다는 게임 특성상 배경음악은 재개 안 시키기로 결정)
+  - **잡은 버그**: `else`가 안쪽 `if(!isNearby)`에 잘못 붙어서, 범위 안에 있는 동안 매 프레임 "재생→리셋→재생→리셋"이 반복되어 소리가 끊임없이 겹쳐 재생됨 → `else`를 바깥쪽 `if(distance <= 범위)`에 붙이도록 중괄호 위치 수정.
+- `MainMenu::OnInitialized()`에서 `MainMenu.wav` 배경음악 재생, `DungeonLevel::OnInitialized()`에서 `GameLevel.wav` 배경음악 재생 — `Sound::PlayBackgroundMusic()`이 내부적으로 이전 곡을 자동 정지하고 교체해줘서 레벨 전환 시 별도 처리 불필요.
+
+### 충돌 판정 첫 프레임 오탐 버그 발견/수정
+
+몬스터/플레이어가 스폰 직후 실제로는 9칸 넘게 떨어져 있는데도 게임 시작하자마자 한 번 데미지를 맞는 현상 발견. 원인: `CollisionSystem`이 "이전 프레임 위치~현재 위치"를 모두 포함하는 swept AABB로 충돌을 계산하는데, `Actor::previousPosition`의 기본값이 `(0,0)`이고 `SetSpawnPosition()`은 `playerX`/`monsterX`같은 별도 float 변수만 설정할 뿐 `Actor::position`/`previousPosition`은 그대로 둠 → 스폰 첫 프레임엔 "이전 위치(0,0)~현재 위치(스폰지점)"라는 실제로 존재하지도 않는 거대한 범위로 충돌 계산되어, 플레이어와 몬스터의 두 스윕 범위가 원점 근처에서 우연히 겹쳐 오탐 발생. `Player`/`Monster`의 `SetSpawnPosition()`에 `SetPosition(...)` + `SavePreviousState()` 호출을 추가해서, 스폰 시점에 `position`과 `previousPosition`을 즉시 동일하게 맞춰 해결.
+
+### 튜토리얼 안내 메세지 추가
+
+게임 시작 시 `TextBox`에 "미니맵의 노란 표시 = 열쇠 위치" 안내를 한 번 보여주는 `MessageType::Tutorial` 추가, `DungeonLevel::OnInitialized()`에서 `textBox` 지역변수 만든 직후 바로 `ShowLines`로 출력 (별도 멤버 변수 없이 지역변수 스코프 안에서 처리).
+
+**현재 상태: 계획했던 모든 필수/선택 기능 구현 완료.** 발표는 2026-09-09. 다음 할 일은 전체 빌드/플레이 테스트 → 구동 영상 녹화 → 장면 컷 편집/GIF 변환 → PPT 삽입.

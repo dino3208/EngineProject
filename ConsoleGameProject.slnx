@@ -4,4 +4,5 @@
   </Configurations>
   <Project Path="CraftEngine/CraftEngine.vcxproj" Id="eaad256e-246f-4e03-8d72-232b6413492a" />
   <Project Path="ShootingGame/ShootingGame.vcxproj" Id="3abce722-628f-4744-822b-8f0e771c0661" />
+  <Project Path="SoundSystem/SoundSystem.vcxproj" Id="9fb9fec9-a71a-4589-ab3e-a6aff361406c" />
 </Solution>

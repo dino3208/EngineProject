@@ -18,9 +18,11 @@ public:
 	{
 		Yes,
 		No,
+		Key,
 		KeyPickUp,
 		Damaged,
 		TotalDamage,
+		GameOver,
 	};
 
 	virtual void Draw() override;

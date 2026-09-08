@@ -5,6 +5,7 @@
 
 #include "Player.h"
 #include "Actor/Monster.h"
+#include "Level/MainMenu.h"
 #include "UI/TextBox.h"
 #include "UI/ScreenArt.h"
 
@@ -22,17 +23,23 @@ void Player::SetSpawnPosition(float x, float y)
 {
 	playerX = x;
 	playerY = y;
+	SetPosition(Vector2(static_cast<int>(x), static_cast<int>(y)));
+	SavePreviousState();// 첫 프레임 충돌검사시 둘 다 기본값이기 때문에 몬스터와 플레이어가 충돌판정이 있었음.
 }
+
+
 
 // 시야각
 const float FOV = DegToRad(60.0f);
 
 // 화면 가로 넓이 갯수만큼 광선 갯수
 std::vector<float> distances;
+std::vector<int> wallHitX;
+std::vector<int> wallHitY;
 
 // 광선 함수
 // map 객체를 기준으로 확인할지 알려줘야 하기 때문에 매개변수 map을 추가
-float CastRay(const Map& map, float startX, float startY, float angle)
+float CastRay(const Map& map, float startX, float startY, float angle, int& hitX, int& hitY)
 {
 	const float step = 0.05f;
 	const float maxDistance = 20.0f;
@@ -51,12 +58,18 @@ float CastRay(const Map& map, float startX, float startY, float angle)
 		// 거리에 광선 반영
 		distance += step;
 
-		// 
+		
 		if (map.IsWall((int)rayX, (int)rayY)) // 포인터 멤버가 아니라 매개변수
 		{
+			hitX = static_cast<int>(rayX);
+			hitY = static_cast<int>(rayY);
 			return distance;
 		}
 	}
+
+	// 벽에 안 부딪히고 최대거리까지 간 경우.
+	hitX = -1; // 맵 좌표는 항상 0 이상이다.
+	hitY = -1; // 따라서 -1은 절대 나올 수 없는 값 -> 특별 신호로 약속.
 
 	return maxDistance;
 }
@@ -72,8 +85,11 @@ void CastAllRays(const Map& map, float playerX, float playerY, float playerAngle
 		float offset = angleStep * i - FOV / 2.0f;
 		float rayAngle = playerAngle + offset;
 
-		float rawDistance = CastRay(map, playerX, playerY, rayAngle);
+		int hitX, hitY;
+		float rawDistance = CastRay(map, playerX, playerY, rayAngle, hitX, hitY);
 		distances[i] = rawDistance * cosf(offset);
+		wallHitX[i] = hitX;
+		wallHitY[i] = hitY;
 	}
 }
 
@@ -151,12 +167,27 @@ void Player::TryPickUpItem()
 		hasKey = true;
 		map->mapData[y][x] = '.';
 		textBox->ShowLines(textBox->GetMessageArt(TextBox::MessageType::KeyPickUp));
+		Engine::Get().PlayOneShot("Key.wav");
 	}
 }
 
+// 탈출 시도 함수.
 void Player::TryExit()
 {
-	int frontX = roundf(playerX + cosf(playerAngle));
+	int x = static_cast<int>(playerX);
+	int y = static_cast<int>(playerY);
+
+	// 화면 밖으로 나가는 것 방지.
+	if (y < 0 || y >= static_cast<int>(map->mapData.size())) { return; }
+	if (x < 0 || x >= static_cast<int>(map->mapData[y].length())) { return; }
+
+	// 열쇠 획득상태로 골 지점 도달시 엔딩.
+	if (hasKey && map->mapData[y][x] == 'G')
+	{
+		hasWon = true;
+		winScreenTimer = 10.0f;
+	}
+	/*int frontX = roundf(playerX + cosf(playerAngle));
 	int frontY = roundf(playerY + sinf(playerAngle));
 
 	if (frontY < 0
@@ -174,13 +205,27 @@ void Player::TryExit()
 	{
 		hasWon = true;
 		winScreenTimer = 10.0f;
-	}
+	}*/
 }
 
+// 테두리 벽 색 칠하기 함수.
+bool TryGetBorderColor(const Map& map, int hitX, int hitY, Color& outColor)
+{
+	if (hitX < 0 || hitY < 0)
+	{
+		return false; // 벽에 안 부딪힌 경우.
+	}
 
-// 플레이어 랜턴
-const float lanternRadius = 1.0f;
-const float lanternFalloff = 2.0f;
+	int lastY = static_cast<int>(map.mapData.size() - 1);
+	int lastX = static_cast<int>(map.mapData[0].length() - 1);
+
+	if (hitY == 0) { outColor = Color::Red; return true; }
+	if (hitY == lastY) { outColor = Color::Yellow; return true; }
+	if (hitX == 0) { outColor = Color::Green; return true; }
+	if (hitX == lastX) { outColor = Color::Blue; return true; }
+
+	return false;
+}
 //---------------------------------------------------------------------------------------//
 
 using namespace Craft;
@@ -204,6 +249,8 @@ void Player::OnCollision(const std::shared_ptr<Actor>& other)
 		{
 			return;
 		}
+		// 소리.
+		Engine::Get().PlayOneShot("Damage.wav");
 
 		int damage = damageValues[hitCount];
 		hitCount++;
@@ -223,7 +270,7 @@ void Player::OnCollision(const std::shared_ptr<Actor>& other)
 
 		if (totalDamage >= 100)
 		{
-			QuitGame();
+			hasLost = true;
 		}
 	}
 }
@@ -231,6 +278,8 @@ void Player::OnCollision(const std::shared_ptr<Actor>& other)
 void Player::BeginPlay()
 {
 	distances.resize(viewWidth);
+	wallHitX.resize(viewWidth);
+	wallHitY.resize(viewWidth);
 }
 
 void Player::Tick(float deltaTime)
@@ -239,6 +288,7 @@ void Player::Tick(float deltaTime)
 
 	if (hasWon)
 	{
+		Engine::Get().PlayOneShot("Ending.wav");
 		if (winScreenTimer > 0.0f)
 		{
 			winScreenTimer -= deltaTime;
@@ -247,11 +297,25 @@ void Player::Tick(float deltaTime)
 		{
 			if (Input::Get().GetKeyDown(key))
 			{
-				QuitGame();
+				Engine::Get().AddNewLevel<MainMenu>(); // 끝난 화면에서 메인화면으로 복귀.
 				break;
 			}
 		}
 		return;
+	}
+	if (hasLost)
+	{
+		Engine::Get().PlayBackGroundMusic("GameOver.wav");
+		textBox->ShowLines(textBox->GetMessageArt(TextBox::MessageType::GameOver));
+		for (int key = 0; key < 256; ++key)
+		{
+			if (Input::Get().GetKeyDown(key))
+			{
+				Engine::Get().StopBackGroundMusic();
+				Engine::Get().AddNewLevel<MainMenu>(); // 끝난 화면에서 메인화면으로 복귀.
+				break;
+			}
+		}
 	}
 	// 무적시간 진행
 	if(invulnerableTimer> 0.0f)
@@ -289,20 +353,23 @@ void Player::Tick(float deltaTime)
 	float nextY = playerY + moveY;
 
 	TryPickUpItem();
+	TryExit();
 
 	if (!map->IsWall((int)nextX, (int)playerY)) { playerX = nextX; }
 	if (!map->IsWall((int)playerX, (int)nextY)) { playerY = nextY; }
 
-	if (Input::Get().GetKeyDown('E'))
-	{
-		// 탈출 시도
-		TryExit();
-	}
+	//if (Input::Get().GetKeyDown('E'))
+	//{
+	//	// 탈출 시도
+	//	TryExit();
+	//}
 
 	SetPosition(Vector2(static_cast<int>(playerX), static_cast<int>(playerY)));
 
 	CastAllRays(*map, playerX, playerY, playerAngle, viewWidth);
 }
+
+
 
 void Player::Draw()
 {
@@ -321,12 +388,6 @@ void Player::Draw()
 	// 거리에 따른 벽 위아래 그리기로 거리감 표현
 	for (int x = 0;x < viewWidth;++x)
 	{
-		// 랜턴 범위 밖은 그리지 않는 함수
-		if (distances[x] > lanternRadius + lanternFalloff)
-		{
-			continue;
-		}
-
 		int wallHeight = (int)(viewHeight / distances[x]);
 		if (wallHeight > viewHeight)
 		{
@@ -341,17 +402,14 @@ void Player::Draw()
 		{
 			if (y >= wallTop && y <= wallBottom)
 			{
-				char ch;
+				char ch = GetWallChar(distances[x]);
 
-				if (distances[x] > lanternRadius)
+				Color color;
+				if (!TryGetBorderColor(*map, wallHitX[x], wallHitY[x], color))
 				{
-					ch = '.';
+					color = GetWallColor(distances[x]);
 				}
-				else
-				{
-					ch = GetWallChar(distances[x]);
-				}
-				Renderer::Get().Submit(std::string(1,ch), Vector2(x, y), GetWallColor(distances[x]));
+				Renderer::Get().Submit(std::string(1,ch), Vector2(x, y), color);
 			}
 		}
 	}

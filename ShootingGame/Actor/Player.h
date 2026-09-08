@@ -56,6 +56,7 @@ protected:
 	// 열쇠 보유 유무
 	bool hasKey = false;
 	bool hasWon = false;
+	bool hasLost = false;
 	float winScreenTimer = 2.0f;
 };
 

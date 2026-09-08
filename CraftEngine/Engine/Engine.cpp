@@ -3,10 +3,11 @@
 #include <Input/Input.h>
 #include <Render/Renderer.h>
 #include <Physics/CollisionSystem.h>
-
+#include "SoundSystem/Sound.h"
 #include <iostream>
 #include <Windows.h> // #include <chrono>
 #include <cassert>
+#include <fstream>
 
 
 namespace Craft // 이걸 CPP에서 작성함으로 인해서 괄호 안에 정의가 자동으로 들어갈 수 있게 됨.
@@ -34,6 +35,9 @@ namespace Craft // 이걸 CPP에서 작성함으로 인해서 괄호 안에 정�
 
 		// 콜리전 시스템 객체 생성
 		collisionSystem = std::make_unique<CollisionSystem>();
+
+		// 사운드 시스템 객체 생성.
+		sound = std::make_unique<Sound>();
 	}
 	Engine::~Engine()
 	{
@@ -144,6 +148,34 @@ namespace Craft // 이걸 CPP에서 작성함으로 인해서 괄호 안에 정�
 	{
 		// 엔진 종료 플래그 설정
 		isQuit = true;
+	}
+	void Engine::PlayOneShot(const std::string& filename)
+	{
+		if (!sound)
+		{
+			return;
+		}
+
+		// 사운드 시스템 함수 호출.
+		sound->PlayOneShot(std::string("../Assets/Sound/") + filename);
+	}
+	void Engine::PlayBackGroundMusic(const std::string& filename)
+	{
+		if (!sound)
+		{
+			return;
+		}
+
+		sound->PlayBackgroundMusic(std::string("../Assets/Sound/") + filename);
+	}
+	void Engine::StopBackGroundMusic()
+	{
+		if (!sound)
+		{
+			return;
+		}
+
+		sound->StopBackgroundMusic();
 	}
 	Engine& Engine::Get()
 	{

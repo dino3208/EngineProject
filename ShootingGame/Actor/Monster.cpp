@@ -1,4 +1,6 @@
-﻿#include "Actor/Monster.h"
+﻿#include <Engine/Engine.h>
+
+#include "Actor/Monster.h"
 #include <Render/Renderer.h>
 
 using namespace Craft;
@@ -16,6 +18,8 @@ void Monster::SetSpawnPosition(float x, float y)
 {
 	monsterX = x;
 	monsterY = y;
+	SetPosition(Vector2(static_cast<int>(x), static_cast<int>(y)));
+	SavePreviousState();
 }
 
 void Monster::Stun(float duration)
@@ -28,6 +32,14 @@ void Monster::BeginPlay()
 
 }
 
+// 플레이어와의 거리에 따라 이동 주기 결정 -> 멀면 빠르게, 가까우면 느리게
+float GetMoveInterval(float distance)
+{
+	if (distance > 7.0f) { return 0.5f; }
+	if (distance > 4.0f) { return 1.5f; }
+	return 3.0f;
+}
+
 void Monster::Tick(float deltaTime)
 {
 	Actor::Tick(deltaTime);
@@ -37,10 +49,29 @@ void Monster::Tick(float deltaTime)
 		stunTimer -= deltaTime;
 		return; // 이동 로직 전부 건너뛰기.
 	}
-	moveTimer += deltaTime;
-	if (moveTimer >= moveInterval)
+
+	float dx = player->GetPosition().x - monsterX;
+	float dy = player->GetPosition().y - monsterY;
+	float distance = sqrtf(dx * dx + dy * dy); // sqrtf-> 제곱근을 구하는 함수.
+
+	// 거리 안에 들어오면 소리 재생.
+	if (distance <= 3.0f)
 	{
-		moveTimer -= moveInterval;
+		if (!isNearby)
+		{
+		Engine::Get().PlayOneShot("Roar.wav");
+		isNearby = true;
+		}
+	}
+	else
+	{
+		isNearby = false;
+	}
+
+	moveTimer += deltaTime;
+	if (moveTimer >= GetMoveInterval(distance))
+	{
+		moveTimer -= GetMoveInterval(distance);
 
 		Position Start((int)monsterX, (int)monsterY);
 		Position Goal(player->GetPosition().x, player->GetPosition().y); // 플레이어의 현재 위치.
