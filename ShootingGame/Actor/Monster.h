@@ -19,6 +19,7 @@ public:
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float deltaTime) override;
+	virtual void Draw() override;
 
 	Map* map = nullptr;
 

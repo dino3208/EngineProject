@@ -288,7 +288,7 @@ void Player::Tick(float deltaTime)
 
 	if (hasWon)
 	{
-		Engine::Get().PlayOneShot("Ending.wav");
+		Engine::Get().PlayBackGroundMusic("Ending.wav");
 		if (winScreenTimer > 0.0f)
 		{
 			winScreenTimer -= deltaTime;
@@ -297,6 +297,7 @@ void Player::Tick(float deltaTime)
 		{
 			if (Input::Get().GetKeyDown(key))
 			{
+				Engine::Get().StopBackGroundMusic();
 				Engine::Get().AddNewLevel<MainMenu>(); // 끝난 화면에서 메인화면으로 복귀.
 				break;
 			}

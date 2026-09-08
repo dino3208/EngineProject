@@ -88,3 +88,7 @@ void Monster::Tick(float deltaTime)
 	SetPosition(Vector2(static_cast<int>(monsterX), static_cast<int>(monsterY)));
 
 }
+
+void Monster::Draw()
+{
+}
